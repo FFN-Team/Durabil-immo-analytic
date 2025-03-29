@@ -1,0 +1,84 @@
+[{"annonce" : {
+   "price":  200000,
+   "location":{
+   "country_id":"FR",
+   "region_id":"12",
+   "region_name":"Ile-de-France",
+   "department_id":"92",
+   "department_name":"Hauts-de-Seine",
+   "city_label":"Colombes 92700",
+   "city":"Colombes",
+   "zipcode":"92700",
+   "lat":48.91999332000413,
+   "lng":2.250407305960515,
+   "source":"city",
+   "provider":"here",
+   "is_shape":true,
+   "feature":{
+      "type":"Feature",
+      "geometry":{
+         "type":"Point",
+         "coordinates":[
+            2.25265,
+            48.92209
+         ]
+      },
+      "properties":"None"}
+   }
+}},
+{"annonce":{
+   "price":250000,
+   "location":{
+   "country_id":"FR",
+   "region_id":"12",
+   "region_name":"Ile-de-France",
+   "department_id":"92",
+   "department_name":"Hauts-de-Seine",
+   "city_label":"Colombes 92700",
+   "city":"Colombes",
+   "zipcode":"92700",
+   "lat":48.91999332000413,
+   "lng":2.250407305960515,
+   "source":"city",
+   "provider":"here",
+   "is_shape":true,
+   "feature":{
+      "type":"Feature",
+      "geometry":{
+         "type":"Point",
+         "coordinates":[
+            2.25265,
+            48.92209
+         ]
+      },
+      "properties":"None"
+   }
+}
+}},
+{"annonce":{
+   "price":150000,
+   "location":{
+                     "country_id":"FR",
+                     "region_id":"12",
+                     "region_name":"Ile-de-France",
+                     "department_id":"92",
+                     "department_name":"Hauts-de-Seine",
+                     "city_label":"Clamart 92140",
+                     "city":"Clamart",
+                     "zipcode":"92140",
+                     "lat":48.78272861956887,
+                     "lng":2.229023494868279,
+                     "source":"city",
+                     "provider":"here",
+                     "is_shape":true,
+                     "feature":{
+                        "type":"Feature",
+                        "geometry":{
+                           "type":"Point",
+                           "coordinates":[
+                              2.2631,
+                              48.79988
+                           ]
+                        },
+                        "properties":null}}}}
+]
