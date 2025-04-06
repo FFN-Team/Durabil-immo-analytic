@@ -82,7 +82,7 @@ def get_data():
 @app.route('/annonces-par-ville')
 def annonces_par_ville():
     data = df["city"].value_counts().sort_values(ascending=False).to_dict()
-    print(data)
+    # print(data)
     return jsonify(data)
 
 @app.route('/annonces-pro-vs-particulier')
@@ -95,6 +95,12 @@ def annonces_par_agence():
     data = df["name"].value_counts().head(20).to_dict()
     return jsonify(data)
 
+@app.route('/date-publication-annonces')
+def date_publication_annonces():
+    filtered_series = df["first_publication_date"].dropna()
+    converted_series = filtered_series.apply(lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").date())
+    return jsonify({ "dates": converted_series.to_list() })
+
 
 # Analyse des biens disponibles
 # - année de construction par ville
@@ -105,11 +111,75 @@ def annee_construction_par_ville():
     data = filtered_df.groupby("city")["building_year"].apply(list).to_dict()
     return jsonify(data)
 
-@app.route('/date-publication-annonces')
-def date_publication_annonces():
-    filtered_series = df["first_publication_date"].dropna()
-    converted_series = filtered_series.apply(lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").date())
-    return jsonify({ "dates": converted_series.to_list() })
+
+# Attractivité des annonces
+
+@app.route('/nb-moyen-favorites-par-annonce-boost')
+def nb_moyen_favorites_par_annonce_boost():
+    filtered_df = df[["first_publication_date", "is_boosted", "favorites"]].dropna()
+    filtered_df["year"] = filtered_df["first_publication_date"].apply(
+        lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").year
+    )
+    filtered_df["month"] = filtered_df["first_publication_date"].apply(
+        lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").month
+    )
+    filtered_df = filtered_df.drop("first_publication_date", axis=1)
+    
+    boosted_and_non_boosted_df = filtered_df.groupby(["year", "month", "is_boosted"])["favorites"].agg(['sum', 'count'])
+    useless_rows_indexes = drop_useless_rows_boosted_and_non_boosted(boosted_and_non_boosted_df)
+    total_df = filtered_df.groupby(["year", "month"])["favorites"].agg(['sum', 'count'])
+    drop_useless_rows(total_df, useless_rows_indexes)
+
+    concat_df = pd.concat([boosted_and_non_boosted_df, total_df])
+    concat_df["average_number_of_favorites_per_ad"] = get_average_numbers_of_favorites_per_ad(concat_df)
+
+    return jsonify(get_dict_nb_moyen_favorites_par_annonce_boost(concat_df))
+
+def drop_useless_rows_boosted_and_non_boosted(boosted_and_non_boosted_df):
+    df_temp = boosted_and_non_boosted_df.groupby(["year", "month"]).count()
+    useless_rows_indexes = []
+
+    for tuple in df_temp.itertuples():
+        if tuple.count == 1: 
+            useless_rows_indexes.append(tuple.Index)
+            boosted_and_non_boosted_df.drop(tuple.Index, inplace=True)
+    return useless_rows_indexes
+
+def drop_useless_rows(df, useless_rows_indexes):
+    for index in useless_rows_indexes:
+        df.drop(index, inplace=True)
+
+def get_average_numbers_of_favorites_per_ad(df):
+    average_number_of_favorites_per_ad = []
+    
+    for i in range(len(df.values)):
+        number_of_favorites = df.values[i][0]
+        number_of_ads = df.values[i][1]
+        average_number_of_favorites_per_ad.append(number_of_favorites / number_of_ads)
+
+    return average_number_of_favorites_per_ad
+
+def get_dict_nb_moyen_favorites_par_annonce_boost(df):
+    dict = {}
+    for tuple in df.itertuples():
+        if tuple.Index[0] not in dict.keys():
+            dict.update({ tuple.Index[0]: {} })
+    for tuple in df.itertuples():
+        year = tuple.Index[0]
+        month = tuple.Index[1]
+        if month not in dict[year].keys():
+            dict[year].update({ month: {} })
+    for tuple in df.itertuples():
+        year = tuple.Index[0]
+        month = tuple.Index[1]
+        type = get_boosted_label(tuple.Index[2]) if len(tuple.Index) == 3 else "Total"
+        dict[year][month].update({ 
+            type: tuple.average_number_of_favorites_per_ad 
+        })
+    return dict
+
+def get_boosted_label(value):
+    return "Boosted" if value == 1 else "Non boosted"
 
 ########################## MAIN ###################### 
 

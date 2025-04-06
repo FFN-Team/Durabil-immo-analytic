@@ -32,6 +32,7 @@
         <canvas id="buildingYearChart"></canvas>
     </div>
     <div id="adsPublicationDateChart"></div>
+    <div id="boostSuccessRateChart"></div>
 
     
     <script>
@@ -160,8 +161,70 @@
             Plotly.newPlot("adsPublicationDateChart", [data]);
         }
 
+        async function renderBoostSuccessRateChart() {
+            // Nombre de favorites par annonces selon le boost (Grouped Bar Chart)
+            const boostSuccessRateData = await fetchData("/nb-moyen-favorites-par-annonce-boost");
+            
+            let months = []
+            let boostedData = []
+            let nonBoostedData = []
+            let totalData = []
+
+            for (let year in boostSuccessRateData) {
+                for (let month in boostSuccessRateData[year]) {
+                }
+            }
+            
+            for (let year in boostSuccessRateData) {
+                for (let month in boostSuccessRateData[year]) {
+                    months.push(month + "/" + year)
+                    for (let type in boostSuccessRateData[year][month]) {
+                        if (type == "Boosted") {
+                            boostedData.push(boostSuccessRateData[year][month][type])
+                        } else if (type == "Non boosted") {
+                            nonBoostedData.push(boostSuccessRateData[year][month][type])
+                        } else if (type == "Total") {
+                            totalData.push(boostSuccessRateData[year][month][type])
+                        }
+                    }
+                }
+            }
+            
+            let trace1 = {
+                x: months,
+                y: boostedData,
+                name: 'Annonce boostée',
+                type: 'bar'
+            };
+
+            let trace2 = {
+                x: months,
+                y: totalData,
+                name: 'Total',
+                type: 'bar'
+            };
+
+            let trace3 = {
+                x: months,
+                y: nonBoostedData,
+                name: 'Annonce non boostée',
+                type: 'bar'
+            };
+
+            let data = [trace1, trace2, trace3];
+            let layout = {
+                title: {
+                    text: 'Nombre moyen de mise en favori par annonce'
+                },
+                barmode: 'group'
+            };
+
+            Plotly.newPlot('boostSuccessRateChart', data, layout);
+        }
+
         renderCharts();
         renderAdsPublicationDateChart();
+        renderBoostSuccessRateChart();
     </script>
 </body>
 </html>
