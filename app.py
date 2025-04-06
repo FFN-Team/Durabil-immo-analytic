@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import pandas as pd
+import datetime
 
 
 app = Flask(__name__)
@@ -8,7 +9,7 @@ CORS(app, origins=["http://localhost:3000"])
 
 
 # Chargement du dataset
-CSV_FILE = "data/extracted_data_transformed.csv"
+CSV_FILE = "data/data_final.csv"
 df = pd.read_csv(CSV_FILE, delimiter=';', encoding="utf-8")
 # Remarque : entete du CSV : 
 # list_id;url;price;body;subject;first_publication_date;index_date;status;nb_images;country_id;region_id;region_name;department_id;city;zipcode;lat;lng;type;name;siren;has_phone;is_boosted;favorites;square;land_plot_surface;rooms;bedrooms;nb_bathrooms;nb_shower_room;energy_rate;ges;heating_type;heating_mode;elevator;fees_at_the_expanse_of;fai_included;mandate_type;price_per_square_meter;immo_sell_type;is_import;nb_floors;nb_parkings;building_year;virtual_tour;old_price;annual_charges;orientation;is_virtual_tour
@@ -104,7 +105,11 @@ def annee_construction_par_ville():
     data = filtered_df.groupby("city")["building_year"].apply(list).to_dict()
     return jsonify(data)
 
-
+@app.route('/date-publication-annonces')
+def date_publication_annonces():
+    filtered_series = df["first_publication_date"].dropna()
+    converted_series = filtered_series.apply(lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").date())
+    return jsonify({ "dates": converted_series.to_list() })
 
 ########################## MAIN ###################### 
 

@@ -6,6 +6,7 @@
     <title>Dashboard Annonces</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         .chart-container { width: 80%; margin: auto; }
@@ -30,6 +31,7 @@
     <div class="chart-container">
         <canvas id="buildingYearChart"></canvas>
     </div>
+    <div id="adsPublicationDateChart"></div>
 
     
     <script>
@@ -37,7 +39,7 @@
             const response = await fetch(url);
             return response.json();
         }
-
+        
         async function renderCharts() {
             // Annonces par type de vente
             const sellTypeData = await fetchData('/annonces-par-sell-type');
@@ -106,7 +108,7 @@
             // Année de construction par ville (Boxplot)
             const buildingYearData = await fetchData('/annee-construction-par-ville');
             const formattedData = Object.values(buildingYearData).map(years => ({ min: Math.min(...years), whiskerMin:Math.min(...years), whiskerMax:Math.max(...years), max: Math.max(...years), q1: years[Math.floor(years.length * 0.25)], mean: years.reduce((a, b) => a + b, 0) / years.length, median: years[Math.floor(years.length * 0.5)], q3: years[Math.floor(years.length * 0.75)] }));
-
+            
             new Chart(document.getElementById('buildingYearChart'), {
                 type: 'boxplot',
                 data: {
@@ -140,10 +142,26 @@
                         }
                     }
                 }
-            });
+            });            
         }
-        
+
+        async function renderAdsPublicationDateChart() {
+            // Dates de publication des annonces (Boxplot)
+            const adsPublicationDateData = await fetchData("/date-publication-annonces");
+            
+            const stringDates = Object.values(adsPublicationDateData)[0];
+            const dates = stringDates.map(date => new Date(date));
+            const data = {
+                x: dates,
+                type: "box",
+                name: "Date de publication des annonces"
+            };
+            
+            Plotly.newPlot("adsPublicationDateChart", [data]);
+        }
+
         renderCharts();
+        renderAdsPublicationDateChart();
     </script>
 </body>
 </html>
