@@ -6,6 +6,9 @@
     <title>Dashboard Annonces</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.27.1/plotly.min.js"></script>
+
+
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         .chart-container { width: 80%; margin: auto; }
@@ -14,136 +17,431 @@
 </head>
 <body>
     <h1>Dashboard des Annonces</h1>
-    
+
     <div class="chart-container">
-        <canvas id="sellTypeChart"></canvas>
+        <div id="sellTypeChart"></div>
     </div>
+
     <div class="chart-container">
-        <canvas id="cityChart"></canvas>
+        <div id="cityChart"></div>
     </div>
+
     <div class="chart-container">
-        <canvas id="proParticulierChart"></canvas>
+        <div id="proParticulierChart"></div>
     </div>
+
     <div class="chart-container">
-        <canvas id="agencyChart"></canvas>
+        <div id="agencyChart"></div>
     </div>
+
     <div class="chart-container">
         <canvas id="buildingYearChart"></canvas>
     </div>
 
+    <div class="chart-container">
+        <div id="buildingYearChart2"></div>
+    </div>
+    
+    <div class="chart-container">
+        <div id="clusterPlot"></div>
+    </div>
+
+    <div class="chart-container">
+        <div id="clusterPercentagesChart"></div>
+    </div>
+    
+    <div class="chart-container">
+        <div id="favorisBoostedChart"></div>
+    </div>
+    
+
+
+    <div class="chart-container">
+        <label for="daysSelect">Période :</label>
+        <select id="daysSelect" onchange="updateDemandeChart()">
+            <option value="15">15 jours</option>
+            <option value="30" selected>1 mois</option>
+            <option value="60">2 mois</option>
+            <option value="90">3 mois</option>
+            <option value="360">1 an</option>
+        </select>
+        <div id="demandeRecenteChart"></div>
+    </div>
+    
+    <div class="chart-container">
+        <div id="correlation-graph"></div>
+    </div>
+    
     
     <script>
         async function fetchData(url) {
             const response = await fetch(url);
             return response.json();
-        }
+        }       
 
         async function renderCharts() {
+
             // Annonces par type de vente
             const sellTypeData = await fetchData('/annonces-par-sell-type');
-            new Chart(document.getElementById('sellTypeChart'), {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(sellTypeData),
-                    datasets: [{
-                        label: "Nombre d'annonces",
-                        data: Object.values(sellTypeData),
-                        backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(255, 206, 86, 0.7)']
-                    }]
-                }
-            });
 
-            // Annonces par ville
+            const labels1 = Object.keys(sellTypeData);
+            const values1 = Object.values(sellTypeData);
+
+            const data1 = [{
+                type: "pie",
+                labels: labels1,
+                values: values1,
+                textinfo: "label+percent",
+                textposition: "outside",
+                automargin: true,
+                marker: {
+                    colors: ['rgba(255, 99, 132, 0.7)', 'rgba(255, 206, 86, 0.7)']
+                }
+            }];
+
+            const layout1 = {
+                title: "Répartition des annonces par type de vente",
+                showlegend: true,
+                margin: { t: 50, b: 50, l: 50, r: 50 }
+            };
+            Plotly.newPlot('sellTypeChart', data1, layout1);
+
+
+
+            // Annonces par ville (version Plotly)
             const cityData = await fetchData('/annonces-par-ville');
 
-            // Transformer le JSON en tableau et trier par valeur (nb d'annonces)
-            const sortedCities = Object.entries(cityData)
-                .sort((a, b) => b[1] - a[1]); // Tri décroissant
+            const sortedCities = Object.entries(cityData).sort((a, b) => a[1] - b[1]);
 
-            const labels = sortedCities.map(item => item[0]); // Noms des villes triées
-            const values = sortedCities.map(item => item[1]); // Nombres d'annonces triés
+            const labels2 = sortedCities.map(item => item[0]);
+            const values2 = sortedCities.map(item => item[1]);
 
-            new Chart(document.getElementById('cityChart'), {
+            const data2 = [{
                 type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Nombre d'annonces",
-                        data: values,
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
-                    }]
-                },
-                options: { indexAxis: 'y' }
-            });
-
-            // Pro vs Particulier
-            const proPartData = await fetchData('/annonces-pro-vs-particulier');
-            new Chart(document.getElementById('proParticulierChart'), {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(proPartData),
-                    datasets: [{
-                        data: Object.values(proPartData),
-                        backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(255, 206, 86, 0.7)']
-                    }]
+                x: values2,
+                y: labels2,
+                orientation: 'h',
+                marker: {
+                    color: 'rgba(54, 162, 235, 0.7)'
                 }
-            });
+            }];
+
+            const layout2 = {
+                title: "Nombre d'annonces par ville",
+                margin: { l: 100, r: 30, t: 50, b: 50 },
+                xaxis: { title: "Nombre d'annonces" },
+                yaxis: { 
+                    //automargin: true,
+                    tickfont: {
+                        size: 7  
+                    }, 
+                }
+            };
+
+            Plotly.newPlot('cityChart', data2, layout2);
+
+
+
+
+
+
+            // Pro vs Particulier (version Plotly)
+            const proPartData = await fetchData('/annonces-pro-vs-particulier');
+
+            const labels3 = Object.keys(proPartData);
+            const values3 = Object.values(proPartData);
+
+            const data3 = [{
+                type: 'pie',
+                labels: labels3,
+                values: values3,
+                textinfo: 'label+percent',
+                textposition: 'outside',
+                marker: {
+                    colors: ['rgba(255, 99, 132, 0.7)', 'rgba(255, 206, 86, 0.7)']
+                },
+                automargin: true
+            }];
+
+            const layout3 = {
+                title: "Répartition Pro vs Particulier",
+                showlegend: true,
+                margin: { t: 50, b: 50, l: 50, r: 50 }
+            };
+
+            Plotly.newPlot('proParticulierChart', data3, layout3);
+
+
+
+
 
             // Annonces par agence
             const agencyData = await fetchData('/annonces-par-agence');
-            new Chart(document.getElementById('agencyChart'), {
+            const sortedAgencies = Object.entries(agencyData).sort((a, b) => b[1] - a[1]);
+
+            const labels4 = sortedAgencies.map(item => item[0]);
+            const values4 = sortedAgencies.map(item => item[1]);
+
+            const data4 = [{
                 type: 'bar',
-                data: {
-                    labels: Object.keys(agencyData),
-                    datasets: [{
-                        label: "Nombre d'annonces",
-                        data: Object.values(agencyData),
-                        backgroundColor: 'rgba(153, 102, 255, 0.7)'
-                    }]
+                x: labels4,
+                y: values4,
+                marker: {
+                    color: 'rgba(153, 102, 255, 0.7)'
                 }
-            });
+            }];
 
-            // Année de construction par ville (Boxplot)
-            const buildingYearData = await fetchData('/annee-construction-par-ville');
-            const formattedData = Object.values(buildingYearData).map(years => ({ min: Math.min(...years), whiskerMin:Math.min(...years), whiskerMax:Math.max(...years), max: Math.max(...years), q1: years[Math.floor(years.length * 0.25)], mean: years.reduce((a, b) => a + b, 0) / years.length, median: years[Math.floor(years.length * 0.5)], q3: years[Math.floor(years.length * 0.75)] }));
-
-            new Chart(document.getElementById('buildingYearChart'), {
-                type: 'boxplot',
-                data: {
-                    labels: Object.keys(buildingYearData),
-                    datasets: [{
-                        label: 'Année de construction',
-                        data: formattedData,
-                        backgroundColor: 'rgba(255, 159, 64, 0.7)'
-                    }]
+            const layout4 = {
+                title: "Nombre d'annonces par agence",
+                xaxis: {
+                    title: "Agences",
+                    tickangle: -45,
+                    tickfont: {
+                        size: 8  
+                    },
+                    automargin: true
                 },
-                options: {
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false  
-                            }                           
-                        },
-                        y: {
-                            min: 1800, 
-                            max:2030,
-                            title: {
-                                display: true,
-                                text: 'Année de construction'
-                            },
-                            grid: {
-                                display: false  
-                            },
-                            ticks: {
-                                display: true  
-                            }
-                        }
-                    }
+                yaxis: {
+                    title: "Nombre d'annonces"
+                },
+                margin: { t: 50, b: 100, l: 50, r: 30 }
+            };
+
+            Plotly.newPlot('agencyChart', data4, layout4);
+
+
+                      
+
+            // Année de construction par ville
+            const buildingYearData5 = await fetchData('/annee-construction-par-ville');
+
+            const data5 = Object.entries(buildingYearData5).map(([ville, annees]) => ({
+                type: 'box',
+                name: ville,
+                y: annees,
+                boxpoints: false, 
+                marker: {
+                    color: 'rgba(255, 159, 64, 0.7)'
                 }
+            }));
+
+            const layout5 = {
+                title: "Année de construction par ville",
+                yaxis: {
+                    title: "Année de construction",
+                    range: [1800, 2030],
+                    gridcolor: 'rgba(200, 200, 200, 0.2)'
+                },
+                xaxis: {
+                    tickangle: -30,
+                    automargin: true
+                },
+                margin: { t: 50, b: 100, l: 60, r: 30 }
+            };
+
+            Plotly.newPlot('buildingYearChart2', data5, layout5);
+
+
+
+
+            // Clustering PCA - groupes de biens
+            const response = await fetch('/clusters');
+            const data = await response.json();
+
+            const clusterColors = [
+                '#e6194b', '#3cb44b', '#ffe119', '#4363d8',
+                '#f58231', '#911eb4', '#46f0f0', '#f032e6'
+            ];
+
+            const individualsByCluster = {};
+            data.individuals.forEach(indiv => {
+                if (!individualsByCluster[indiv.cluster]) {
+                    individualsByCluster[indiv.cluster] = { x: [], y: [] };
+                }
+                individualsByCluster[indiv.cluster].x.push(indiv.x);
+                individualsByCluster[indiv.cluster].y.push(indiv.y);
             });
+            
+
+            const pointTraces = Object.entries(individualsByCluster).map(([cluster, coords], i) => ({
+                x: coords.x,
+                y: coords.y,
+                mode: 'markers',
+                type: 'scatter',
+                name: `Cluster ${cluster}`,
+                marker: { color: clusterColors[i % clusterColors.length], size: 6 }
+            }));
+
+            const arrowTraces = data.variables
+            .filter(v => Math.sqrt(v.x * v.x + v.y * v.y) >= 0.5)
+            .map(v => ({
+                type: 'scatter',
+                x: [0, v.x],
+                y: [0, v.y],
+                mode: 'lines+markers',
+                marker: { size: 0.001},
+                line: { color: 'blue', width: 1 },
+                text: v.var,
+                hoverinfo: 'text',
+                showlegend: false,
+            })); 
+
+            const arrowAnnotations = data.variables
+            .filter(v => Math.sqrt(v.x * v.x + v.y * v.y) >= 0.5)
+            .map(v => ({
+                ax: 0, ay: 0,
+                x: v.x, y: v.y, 
+                xref: 'x', yref: 'y',
+                axref: 'x', ayref: 'y',
+                showarrow: true,
+                arrowhead: 3,
+                arrowsize: 1.5,
+                arrowwidth: 1,
+                arrowcolor: 'blue',
+                xanchor: 'center',
+                yanchor: 'bottom',
+            }));
+
+
+            const layout = {
+                title: "ACP + Clustering",
+                xaxis: { title: "Dim1", zeroline: true },
+                yaxis: { title: "Dim2", zeroline: true },
+                showlegend: true,
+                annotations: arrowAnnotations
+            };
+
+            Plotly.newPlot('clusterPlot', [...pointTraces, ...arrowTraces], layout);
+
+
+            // Pourcentage de chaque cluster
+            const clusterCounts = data.individuals.reduce((counts, indiv) => {
+                const cluster = indiv.cluster;
+                counts[cluster] = (counts[cluster] || 0) + 1;
+                return counts;
+            }, {});
+
+            const totalIndividuals = data.individuals.length;
+
+            const clusterPercentages = Object.entries(clusterCounts).map(([cluster, count]) => ({
+                cluster: cluster,
+                percentage: (count / totalIndividuals * 100).toFixed(2)
+            }));
+
+            const clusterLabels = clusterPercentages.map(item => `Cluster ${item.cluster}`);
+            const clusterValues = clusterPercentages.map(item => parseFloat(item.percentage));
+
+            const dataClusterPercentages = [{
+                type: 'pie',
+                labels: clusterLabels,
+                values: clusterValues,
+                textinfo: 'label+percent',
+                textposition: 'outside',
+                automargin: true,
+                marker: {
+                    colors: clusterLabels.map((_, i) => clusterColors[i % clusterColors.length])
+                }
+            }];
+
+            const layoutClusterPercentages = {
+                title: "Pourcentage de chaque cluster",
+                showlegend: true,
+                margin: { t: 50, b: 50, l: 50, r: 50 }
+            };
+
+            Plotly.newPlot('clusterPercentagesChart', dataClusterPercentages, layoutClusterPercentages);
+
+
+            // Demande récente
+            await updateDemandeChart();
+
+
+            // Fonction pour récupérer les corrélations depuis l'API
+            fetch('/api-correlation-prix')
+            .then(response => response.json())
+            .then(data => {
+                const variables = Object.keys(data);
+                const correlationValues = Object.values(data);
+
+                const trace = {
+                    x: variables,
+                    y: correlationValues,
+                    type: 'bar',
+                    marker: {
+                        color: 'rgb(55, 83, 109)'
+                    }
+                };
+
+                const layout = {
+                    title: 'Corrélations entre le prix annoncé et les autres variables',
+                    xaxis: {
+                        title: 'Variables',
+                    },
+                    yaxis: {
+                        title: 'Corrélation'
+                    }
+                };
+
+                Plotly.newPlot('correlation-graph', [trace], layout);
+            })
+            .catch(error => console.error('Erreur lors de la récupération des données:', error));
         }
         
+        async function updateDemandeChart() {
+            const days = document.getElementById('daysSelect').value;
+            const demandeData = await fetchData(`/demande-recente-like?days=${days}`);
+
+            console.log(demandeData)
+            
+            const sortedDemande = Object.entries(demandeData.demande_par_ville)             
+
+            const sortedFavorites = Object.entries(demandeData.favorites_par_ville)
+
+            const labels = sortedDemande.map(item => item[0]);
+            const annonceValues = sortedDemande.map(item => item[1]);
+            const favoriteValues = sortedFavorites.map(item => item[1]);
+
+            console.log(labels)
+            console.log(annonceValues)
+            console.log(favoriteValues)
+
+            const data = [
+                {
+                    type: 'bar',
+                    x: labels,
+                    y: annonceValues,
+                    orientation: 'v',
+                    name: 'Nombre d\'annonces',
+                    marker: {
+                        color: 'rgba(75, 192, 192, 0.7)'
+                    }
+                },
+                {
+                    type: 'bar',
+                    x: labels,
+                    y: favoriteValues,
+                    orientation: 'v',
+                    name: 'Nombre de favoris',
+                    marker: {
+                        color: 'rgba(153, 102, 255, 0.7)'
+                    }
+                }
+            ];
+
+            const layout = {
+                title: `Demandes récentes et favoris (${days} derniers jours)`,
+                barmode: 'group',
+                margin: { l: 100, r: 30, t: 50, b: 200 },
+                xaxis: { title: "Nombre d'annonces / Favoris",tickfont: { size: 8 } },
+                yaxis: { tickfont: { size: 8 } }
+            };
+
+            Plotly.newPlot('demandeRecenteChart', data, layout);
+        }
+
+
         renderCharts();
     </script>
+
 </body>
 </html>
