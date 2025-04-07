@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import pandas as pd
+import json
 from collections import defaultdict 
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -335,6 +337,69 @@ def annee_construction_par_ville():
     data = filtered_df.groupby("city")["building_year"].apply(list).to_dict()
     return jsonify(data)
 
+@app.route('/api/cities/<zipCode>', methods=['GET'])
+def getCity(zipCode):
+    try:
+        df = pd.read_json("resource/france-cities-data.json")
+
+        cities = []
+        
+        for city in df["data"]:
+            if city.get("code_postal") == zipCode:
+                nouveauZipCode = city.get("code_postal")
+                name = city.get("nom_standard")
+                population = city.get("population")
+                superficie_km2 = city.get("superficie_km2")
+                densite = city.get("densite")
+                grille_densite_texte = city.get("grille_densite_texte")
+                niveau_equipements_services_texte = city.get("niveau_equipements_services_texte")
+                nom_unite_urbaine = city.get("nom_unite_urbaine")
+                reg_nom = city.get("reg_nom")
+                dep_nom = city.get("dep_nom")
+                canton_nom = city.get("canton_nom")
+                url_wikipedia = city.get("url_wikipedia")
+                url_villedereve = city.get("url_villedereve")
+
+
+                cities.append({
+                            "zipCode": nouveauZipCode,
+                            "name": name,
+                            "population": population,
+                            "superficie_km2" : superficie_km2,
+                            "densite": densite,
+                            "grille_densite_texte": grille_densite_texte,
+                            "niveau_equipements_services_texte": niveau_equipements_services_texte,
+                            "nom_unite_urbaine": nom_unite_urbaine,
+                            "reg_nom": reg_nom,
+                            "dep_nom": dep_nom,
+                            "canton_nom": canton_nom,
+                            "url_wikipedia": url_wikipedia,
+                            "url_villedereve": url_villedereve
+                        })
+
+        return jsonify(cities)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/best-favorites')
+def best_favorites():
+    df_copy = df[['list_id','url','zipcode','lat','lng','favorites']].copy()
+    df_copy = df_copy[df_copy['favorites'] > 100] 
+    return jsonify(df_copy.to_dict(orient='records'))
+    
+
+@app.route('/bad-ads')
+def bad_ads():
+    df_copy = df[['list_id','url','zipcode','lat','lng','first_publication_date']].copy()
+
+    df_copy['first_publication_date'] = pd.to_datetime(df_copy['first_publication_date'], format='%d/%m/%Y  %H:%M').dt.strftime('%d/%m/%Y')
+    df_copy['days_difference'] = (datetime.now() - pd.to_datetime(df_copy['first_publication_date'], format='%d/%m/%Y')).dt.days
+    print(df_copy)
+                
+    recent_df = df_copy[df_copy['days_difference'] >= 360]
+    print(recent_df)
+
+    return jsonify(recent_df.to_dict(orient='records'))
 
 
 ########################## MAIN ###################### 
