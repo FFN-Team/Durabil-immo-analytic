@@ -6,7 +6,6 @@
     <title>Dashboard Annonces</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
-    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
         .chart-container { width: 80%; margin: auto; }
@@ -31,8 +30,6 @@
     <div class="chart-container">
         <canvas id="buildingYearChart"></canvas>
     </div>
-    <div id="adsPublicationDateChart"></div>
-    <div id="boostSuccessRateChart"></div>
 
     
     <script>
@@ -40,7 +37,7 @@
             const response = await fetch(url);
             return response.json();
         }
-        
+
         async function renderCharts() {
             // Annonces par type de vente
             const sellTypeData = await fetchData('/annonces-par-sell-type');
@@ -109,7 +106,7 @@
             // Année de construction par ville (Boxplot)
             const buildingYearData = await fetchData('/annee-construction-par-ville');
             const formattedData = Object.values(buildingYearData).map(years => ({ min: Math.min(...years), whiskerMin:Math.min(...years), whiskerMax:Math.max(...years), max: Math.max(...years), q1: years[Math.floor(years.length * 0.25)], mean: years.reduce((a, b) => a + b, 0) / years.length, median: years[Math.floor(years.length * 0.5)], q3: years[Math.floor(years.length * 0.75)] }));
-            
+
             new Chart(document.getElementById('buildingYearChart'), {
                 type: 'boxplot',
                 data: {
@@ -143,88 +140,10 @@
                         }
                     }
                 }
-            });            
+            });
         }
-
-        async function renderAdsPublicationDateChart() {
-            // Dates de publication des annonces (Boxplot)
-            const adsPublicationDateData = await fetchData("/date-publication-annonces");
-            
-            const stringDates = Object.values(adsPublicationDateData)[0];
-            const dates = stringDates.map(date => new Date(date));
-            const data = {
-                x: dates,
-                type: "box",
-                name: "Date de publication des annonces"
-            };
-            
-            Plotly.newPlot("adsPublicationDateChart", [data]);
-        }
-
-        async function renderBoostSuccessRateChart() {
-            // Nombre de favorites par annonces selon le boost (Grouped Bar Chart)
-            const boostSuccessRateData = await fetchData("/nb-moyen-favorites-par-annonce-boost");
-            
-            let months = []
-            let boostedData = []
-            let nonBoostedData = []
-            let totalData = []
-
-            for (let year in boostSuccessRateData) {
-                for (let month in boostSuccessRateData[year]) {
-                }
-            }
-            
-            for (let year in boostSuccessRateData) {
-                for (let month in boostSuccessRateData[year]) {
-                    months.push(month + "/" + year)
-                    for (let type in boostSuccessRateData[year][month]) {
-                        if (type == "Boosted") {
-                            boostedData.push(boostSuccessRateData[year][month][type])
-                        } else if (type == "Non boosted") {
-                            nonBoostedData.push(boostSuccessRateData[year][month][type])
-                        } else if (type == "Total") {
-                            totalData.push(boostSuccessRateData[year][month][type])
-                        }
-                    }
-                }
-            }
-            
-            let trace1 = {
-                x: months,
-                y: boostedData,
-                name: 'Annonce boostée',
-                type: 'bar'
-            };
-
-            let trace2 = {
-                x: months,
-                y: totalData,
-                name: 'Total',
-                type: 'bar'
-            };
-
-            let trace3 = {
-                x: months,
-                y: nonBoostedData,
-                name: 'Annonce non boostée',
-                type: 'bar'
-            };
-
-            let data = [trace1, trace2, trace3];
-            let layout = {
-                title: {
-                    text: 'Nombre moyen de mise en favori par annonce'
-                },
-                barmode: 'group'
-            };
-
-            Plotly.newPlot('boostSuccessRateChart', data, layout);
-        }
-
+        
         renderCharts();
-        renderAdsPublicationDateChart();
-        renderBoostSuccessRateChart();
     </script>
 </body>
 </html>
