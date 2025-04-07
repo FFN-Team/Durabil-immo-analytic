@@ -181,6 +181,100 @@ def get_dict_nb_moyen_favorites_par_annonce_boost(df):
 def get_boosted_label(value):
     return "Boosted" if value == 1 else "Non boosted"
 
+@app.route('/evolution-nb-images-favorites')
+def evolution_nb_images_favorites():
+    filtered_df = df[["first_publication_date", "nb_images", "favorites"]].dropna()
+    filtered_df["year"] = filtered_df["first_publication_date"].apply(
+        lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").year
+    )
+    filtered_df["month"] = filtered_df["first_publication_date"].apply(
+        lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").month
+    )
+    filtered_df = filtered_df.drop("first_publication_date", axis=1)
+    sorted_df = filtered_df.sort_values(by=["year", "month", "nb_images"])
+    useless_rows = get_useless_rows_nb_images(sorted_df)
+
+    dict = get_dict_evolution_nb_images_favorites(sorted_df, useless_rows)
+    return jsonify(dict)
+
+def get_dict_evolution_nb_images_favorites(df, useless_rows):
+    df_year = df["year"].drop_duplicates()
+    dict = {}
+    for year in df_year:
+        dict.update({ year: {} })
+    for tuple in df.itertuples():
+        if tuple.month not in dict[tuple.year].keys():
+            dict[tuple.year].update({ tuple.month: {} })
+    for tuple in df.itertuples():
+        dict[tuple.year][tuple.month].update({ 
+            "Nb_Images": [], 
+            "Nb_Favorites": []
+        })
+    for tuple in df.itertuples():
+        dict[tuple.year][tuple.month]["Nb_Images"].append(tuple.nb_images)
+        dict[tuple.year][tuple.month]["Nb_Favorites"].append(tuple.favorites)
+    
+    for i in range(len(useless_rows["year"])):
+        year = useless_rows["year"][i]
+        month = useless_rows["month"][i]
+        if len(dict[year][month]["Nb_Images"]) < 2:
+            dict[year].pop(month)
+    
+    for year in useless_rows["year"]:
+        if year in dict.keys() and len(dict[year]) == 0:
+            dict.pop(year)
+
+    return dict
+
+def get_useless_rows_nb_images(df):
+    df_temp = df.groupby(["year", "month"]).count()
+    useless_rows = { "year" : [], "month": [] }
+    for tuple in df_temp.itertuples():
+        if tuple.nb_images == 1: 
+            useless_rows["year"].append(tuple.Index[0])
+            useless_rows["month"].append(tuple.Index[1])
+    return useless_rows
+
+@app.route('/nb-moyen-favorites-par-type-vendeur-annonce')
+def nb_moyen_favorites_par_type_vendeur_annonce():
+    filtered_df = df[["first_publication_date", "type", "favorites"]].dropna()
+    filtered_df["year"] = filtered_df["first_publication_date"].apply(
+        lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").year
+    )
+    filtered_df["month"] = filtered_df["first_publication_date"].apply(
+        lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").month
+    )
+    filtered_df = filtered_df.drop("first_publication_date", axis=1)
+    all_type_of_seller_df = filtered_df.groupby(["year", "month", "type"])["favorites"].agg(['sum', 'count'])
+    useless_rows_indexes = drop_useless_rows_boosted_and_non_boosted(all_type_of_seller_df)
+
+    total_df = filtered_df.groupby(["year", "month"])["favorites"].agg(['sum', 'count'])
+    drop_useless_rows(total_df, useless_rows_indexes)
+
+    concat_df = pd.concat([all_type_of_seller_df, total_df])
+    concat_df["average_number_of_favorites_per_type_of_seller"] = get_average_numbers_of_favorites_per_ad(concat_df)
+
+    return jsonify(get_dict_nb_moyen_favorites_par_type_vendeur_boost(concat_df))
+
+def get_dict_nb_moyen_favorites_par_type_vendeur_boost(df):
+    dict = {}
+    for tuple in df.itertuples():
+        if tuple.Index[0] not in dict.keys():
+            dict.update({ tuple.Index[0]: {} })
+    for tuple in df.itertuples():
+        year = tuple.Index[0]
+        month = tuple.Index[1]
+        if month not in dict[year].keys():
+            dict[year].update({ month: {} })
+    for tuple in df.itertuples():
+        year = tuple.Index[0]
+        month = tuple.Index[1]
+        type = tuple.Index[2] if len(tuple.Index) == 3 else "Total"
+        dict[year][month].update({ 
+            type: tuple.average_number_of_favorites_per_type_of_seller 
+        })
+    return dict
+
 ########################## MAIN ###################### 
 
 if __name__ == '__main__':
