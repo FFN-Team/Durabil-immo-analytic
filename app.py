@@ -9,6 +9,7 @@ from sklearn.cluster import KMeans
 import numpy as np
 from sklearn.decomposition import PCA
 from flask import request
+from datetime import datetime
 
 
 
@@ -387,17 +388,6 @@ def annonces_pro_vs_particulier():
 def annonces_par_agence():
     data = df["name"].value_counts().head(20).to_dict()
     return jsonify(data)
-
-
-
-######################################################
-######################################################
-
-@app.route('/date-publication-annonces')
-def date_publication_annonces():
-    filtered_series = df["first_publication_date"].dropna()
-    converted_series = filtered_series.apply(lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").date())
-    return jsonify({ "dates": converted_series.to_list() })
 
 
 
