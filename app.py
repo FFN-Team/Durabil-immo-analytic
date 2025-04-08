@@ -9,7 +9,6 @@ from sklearn.cluster import KMeans
 import numpy as np
 from sklearn.decomposition import PCA
 from flask import request
-from datetime import datetime
 
 
 
@@ -660,7 +659,7 @@ def demande_recente():
         df_copy = df[['city', 'first_publication_date','favorites']].copy()
 
         df_copy['first_publication_date'] = pd.to_datetime(df_copy['first_publication_date'], format='%d/%m/%Y  %H:%M').dt.strftime('%d/%m/%Y')
-        df_copy['days_difference'] = (datetime.now() - pd.to_datetime(df_copy['first_publication_date'], format='%d/%m/%Y')).dt.days
+        df_copy['days_difference'] = (datetime.datetime.now() - pd.to_datetime(df_copy['first_publication_date'], format='%d/%m/%Y')).dt.days
                 
         recent_df = df_copy[df_copy['days_difference'] <= days_diff]
 
@@ -771,7 +770,7 @@ def bad_ads():
     df_copy = df[['list_id','url','zipcode','lat','lng','first_publication_date']].copy()
 
     df_copy['first_publication_date'] = pd.to_datetime(df_copy['first_publication_date'], format='%d/%m/%Y  %H:%M').dt.strftime('%d/%m/%Y')
-    df_copy['days_difference'] = (datetime.now() - pd.to_datetime(df_copy['first_publication_date'], format='%d/%m/%Y')).dt.days
+    df_copy['days_difference'] = (datetime.datetime.now() - pd.to_datetime(df_copy['first_publication_date'], format='%d/%m/%Y')).dt.days
     print(df_copy)
                 
     recent_df = df_copy[df_copy['days_difference'] >= 360]
