@@ -198,14 +198,22 @@ def demande_recente():
         demande_par_ville = recent_df['city'].value_counts().to_dict()
         favorites_par_ville = recent_df.groupby('city')['favorites'].sum().to_dict()
 
+        # Calcul des favoris moyens par annonce pour chaque ville
+        favorites_moyenne_par_ville = {
+            city: favorites_par_ville[city] / demande_par_ville[city] 
+            for city in demande_par_ville
+        }
+
         result = {
             "demande_par_ville": demande_par_ville,
-            "favorites_par_ville": favorites_par_ville
+            "favorites_par_ville": favorites_par_ville,
+            "favorites_moyenne_par_ville": favorites_moyenne_par_ville  # Ajout de la moyenne des favoris par annonce
         }
 
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 
@@ -287,6 +295,11 @@ def bad_ads():
     return jsonify(recent_df.to_dict(orient='records')) 
 
 
+@app.route('/date-publication-annonces')
+def date_publication_annonces():
+    filtered_series = df["first_publication_date"].dropna()
+    converted_series = filtered_series.apply(lambda _: datetime.datetime.strptime(_, "%d/%m/%Y %H:%M").date())
+    return jsonify({ "dates": converted_series.to_list() })
 
 
 
