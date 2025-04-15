@@ -831,6 +831,25 @@ def getCity(zipCode):
 
 
 
+######################################################
+######################################################
+
+@app.route('/biens-similaires', methods=['GET'])
+def biens_similaires():
+    try:
+        days_diff = int(request.args.get('days', 30)) 
+
+
+        result = {
+            # "demande_par_ville": demande_par_ville,
+            # "favorites_par_ville": favorites_par_ville,
+            # "favorites_moyenne_par_ville": favorites_moyenne_par_ville
+        }
+
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 ###################################################### 
 ########################## MAIN ######################
