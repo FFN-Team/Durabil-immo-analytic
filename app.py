@@ -30,50 +30,7 @@ df = pd.read_csv(CSV_FILE, delimiter=';', encoding="utf-8")
 df_filtred = pd.read_csv(CSV_FILE_FILTRED, delimiter=';', encoding="utf-8")
 # Remarque : entete du CSV : 
 # list_id;url;price;body;subject;first_publication_date;index_date;status;nb_images;country_id;region_id;region_name;department_id;city;zipcode;lat;lng;type;name;siren;has_phone;is_boosted;favorites;square;land_plot_surface;rooms;bedrooms;nb_bathrooms;nb_shower_room;energy_rate;ges;heating_type;heating_mode;elevator;fees_at_the_expanse_of;fai_included;mandate_type;price_per_square_meter;immo_sell_type;is_import;nb_floors;nb_parkings;building_year;virtual_tour;old_price;annual_charges;orientation;is_virtual_tour
-
-
-######################################################
-######################################################
-
-@app.route('/api/france-polygon', methods=['GET'])
-def get_france_polygon():
-    try:
-        df = pd.read_json("resource/france-cities-data.json")
-
-        citiesPolygon = []
-        
-        for city in df["data"]:
-            zipCode = city.get("code_postal")
-            name = city.get("nom_standard")
-            polygon = city.get("polygone")
-
-            # Vérification : Si le polygone est une liste
-            if isinstance(polygon, list):
-                # Vérification que chaque élément du polygone est une paire [latitude, longitude]
-                valid_polygon = True
-                for coord in polygon:
-                    if not (isinstance(coord, list) and len(coord) == 2 and
-                            isinstance(coord[0], (int, float)) and isinstance(coord[1], (int, float))):
-                        valid_polygon = False
-                        break
-                
-                if valid_polygon:
-                    # Inverser la latitude et la longitude dans chaque paire
-                    inverted_polygon = [[coord[1], coord[0]] for coord in polygon]  # Inverse la paire [latitude, longitude] en [longitude, latitude]
-                    
-                    citiesPolygon.append({
-                        "zipCode": zipCode,
-                        "name": name,
-                        "polygon": inverted_polygon
-                    })
-
-        return jsonify(citiesPolygon)
     
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
-
-
 ######################################################
 ######################################################
 
@@ -152,60 +109,6 @@ def avg_price_par_ville():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-
-# @app.route('/api/annonces/avg-price-per-m2', methods=['GET'])
-# def avg_price_per_m2_par_ville():
-#     try:
-#         # Charger les données des annonces depuis le fichier JSON
-#         df = pd.read_json("resource/annonces.json")
-        
-#         # Créer un dictionnaire pour stocker la somme des prix par m² et la somme des surfaces pour chaque ville
-#         prix_par_m2_total = defaultdict(float)
-#         surface_total = defaultdict(float)
-        
-#         # Parcourir chaque annonce et incrémenter les sommes pour chaque code postal
-#         for annonce in df['annonces']:
-#             zip_code = annonce.get('zipcode')  # Récupérer le code postal de l'annonce
-#             prix = annonce.get('Price')  # Récupérer le prix de l'annonce
-#             surface = annonce.get('square')  # Récupérer la surface de l'annonce en m²
-            
-#             # Vérifier que le code postal, le prix et la surface existent
-#             if zip_code and prix is not None and surface is not None:
-#                 try:
-#                     # Convertir explicitement en float les valeurs de prix et surface si elles ne sont pas vides ou invalides
-#                     prix = float(prix) if prix not in [None, ''] else 0
-#                     surface = float(surface) if surface not in [None, ''] else 0
-                    
-#                     if prix > 0 and surface > 0:  # Ignorer les annonces avec un prix ou une surface de 0
-#                         # Convertir le code postal en string (chaîne de caractères)
-#                         zip_code_str = str(zip_code)
-                        
-#                         # Calculer le prix par m² pour cette annonce
-#                         prix_par_m2 = prix / surface
-                        
-#                         # Ajouter le prix par m² à la somme pour cette ville
-#                         prix_par_m2_total[zip_code_str] += prix_par_m2
-#                         surface_total[zip_code_str] += surface  # Ajouter la surface à la somme des surfaces
-#                 except ValueError:
-#                     # Si la conversion échoue, ignorer cette annonce
-#                     continue
-        
-#         # Calculer le prix moyen par m² par ville
-#         villes = []
-#         for zip_code in prix_par_m2_total:
-#             if surface_total[zip_code] > 0:
-#                 avg_price_per_m2 = prix_par_m2_total[zip_code] / surface_total[zip_code]  # Calcul du prix moyen par m²
-#                 villes.append({"zipCode": zip_code, "avgPricePerM2": round(avg_price_per_m2, 2)})
-        
-#         # Retourner le résultat sous forme de JSON
-#         return jsonify({"villes": villes})
-    
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-
 
 ######################################################
 ######################################################
@@ -288,6 +191,46 @@ def get_annonces():
         return jsonify({"error": str(e)}), 500
 
 
+
+######################################################
+######################################################
+
+
+@app.route('/api/annonces/<annonceId>', methods=['GET'])
+def get_annonce(annonceId):
+    try:
+        df = pd.read_json("resource/annonces.json")
+
+        annonces = []
+        # Convertir annonceId en entier
+        annonceId = int(annonceId)
+
+        for annonce in df["annonces"]:
+            if annonce.get('ID') == annonceId:
+                ID = annonce.get("ID")
+                URL = annonce.get("URL")
+                zipCode = annonce.get("zipcode")
+                Description = annonce.get("Description")
+                square = annonce.get("square")
+                rooms = annonce.get("rooms")
+                price = annonce.get("Price")
+
+                annonces.append({
+                    "id": ID,
+                    "url": URL,
+                    "zipCode": zipCode,
+                    "description": Description,
+                    "square": square,
+                    "rooms": rooms,
+                    "price": price
+                })
+
+        if not annonces:
+            return jsonify({"message": "Aucune annonce trouvée avec cet ID"}), 404
+
+        return jsonify(annonces)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 ######################################################
 ######################################################
