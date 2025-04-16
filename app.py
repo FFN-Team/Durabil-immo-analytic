@@ -186,34 +186,6 @@ def get_annonces():
 ######################################################
 ######################################################
 
-# @app.route('/api/annonces/<annonceId>', methods=['GET'])
-# def get_annonce(annonceId):
-#     try:
-#         df = pd.read_json("resource/annonces.json")
-
-#         annonces = []
-#         for annonce in df["annonces"]:
-#             if annonce.get("ID") == annonceId:
-#                 print("ok")
-#                 ID = annonce.get("ID")
-#                 zipCode = annonce.get("zipcode")
-#                 latitude = annonce.get("lat")
-#                 longitude = annonce.get("lng")
-#                 price = annonce.get("Price")
-
-#                 annonces.append({
-#                     "id": ID,
-#                     "zipCode": zipCode,
-#                     "latitude": latitude,
-#                     "longitude": longitude,
-#                     "price": price
-#                 })
-
-#         return jsonify(annonces)
-    
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/api/annonces/<annonceId>', methods=['GET'])
 def get_annonce(annonceId):
