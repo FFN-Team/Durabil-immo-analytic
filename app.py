@@ -9,6 +9,13 @@ from sklearn.cluster import KMeans
 import numpy as np
 from sklearn.decomposition import PCA
 from flask import request
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import linkage, dendrogram
+from scipy.spatial.distance import cdist
+from sklearn import metrics
+from sklearn.cluster import KMeans
+import json
+
 
 
 
@@ -18,7 +25,9 @@ CORS(app, origins=["http://localhost:3000"])
 
 # Chargement du dataset
 CSV_FILE = "data/data_final.csv"
+CSV_FILE_FILTRED = "data/data_final_pretraited.csv"
 df = pd.read_csv(CSV_FILE, delimiter=';', encoding="utf-8")
+df_filtred = pd.read_csv(CSV_FILE_FILTRED, delimiter=';', encoding="utf-8")
 # Remarque : entete du CSV : 
 # list_id;url;price;body;subject;first_publication_date;index_date;status;nb_images;country_id;region_id;region_name;department_id;city;zipcode;lat;lng;type;name;siren;has_phone;is_boosted;favorites;square;land_plot_surface;rooms;bedrooms;nb_bathrooms;nb_shower_room;energy_rate;ges;heating_type;heating_mode;elevator;fees_at_the_expanse_of;fai_included;mandate_type;price_per_square_meter;immo_sell_type;is_import;nb_floors;nb_parkings;building_year;virtual_tour;old_price;annual_charges;orientation;is_virtual_tour
 
@@ -834,19 +843,76 @@ def getCity(zipCode):
 ######################################################
 ######################################################
 
-@app.route('/biens-similaires', methods=['GET'])
+@app.route('/biens-similaires', methods=['POST'])
 def biens_similaires():
     try:
-        days_diff = int(request.args.get('days', 30)) 
+        data = request.get_json()
+
+        variables = []
+        profil_valeurs = []
+        poids = []
+
+        for item in data:
+            variables.append(item['name'])
+            profil_valeurs.append(item['value'])
+            poids.append(item['weight'])
+
+        df_sub = df_filtred[variables].copy()  
+
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(df_sub)
 
 
-        result = {
-            # "demande_par_ville": demande_par_ville,
-            # "favorites_par_ville": favorites_par_ville,
-            # "favorites_moyenne_par_ville": favorites_moyenne_par_ville
-        }
+        # Dendogramme pour déterminer le nb de clusters => Ici 3 d'après le dendogramme
+        linkage_matrix = linkage(X_scaled, method='ward')
 
-        return jsonify(result)
+        # Clustering hiérarchique
+        CHA = AgglomerativeClustering(n_clusters=3,linkage='ward')
+        CHA.fit(X_scaled)
+        labelsCHA =CHA.fit_predict(X_scaled)
+        df_sub['clusterCHAScikit']=labelsCHA
+
+        # Vérification avec metrics
+        labelsScikit = df_sub['clusterCHAScikit']
+        print(f"Silhouette Score (CAH) : {metrics.silhouette_score(X_scaled, labelsScikit):.9f}")
+        print(f"Davies-Bouldin Score (CAH) : {metrics.davies_bouldin_score(X_scaled, labelsScikit):.9f}")
+
+        print("1")
+        # Profil utilisateur
+        profil_scaled = scaler.transform([profil_valeurs])[0]
+        print("2")
+        # Trouver le cluster le plus proche du profil
+        cluster_centers = df_sub.groupby('clusterCHAScikit').mean()[variables]
+        cluster_centers_scaled = scaler.transform(cluster_centers)
+        print("3")
+        dists = cdist([profil_scaled], cluster_centers_scaled, metric='euclidean')
+        cluster_proche = cluster_centers.index[np.argmin(dists)]
+        print("4")
+        # On filtre les biens dans le cluster trouvé
+        candidats = df_sub[df_sub['clusterCHAScikit'] == cluster_proche].copy()
+        print("5")
+        # On calcule la distance pondérée entre chaque bien et le profil
+        candidats_scaled = scaler.transform(candidats[variables])
+        print("6")
+        dists_personnalisees = np.sum(poids * (candidats_scaled - profil_scaled)**2, axis=1)
+        candidats['distance'] = dists_personnalisees
+        
+        print("7")
+        # Trier et recommander les 5 plus proches
+        recommandations = candidats.sort_values('distance').head(5)
+        recommandations['id'] = recommandations.index
+        recommandations['list_id'] = df_filtred['list_id'].iloc[recommandations['id']].astype('int64')
+        
+
+
+        print("8")
+
+        json_result = json.dumps(recommandations['list_id'].tolist())
+        print(json_result)
+
+        print("9")
+
+        return json_result
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
