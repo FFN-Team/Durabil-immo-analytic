@@ -15,6 +15,7 @@ from scipy.spatial.distance import cdist
 from sklearn import metrics
 from sklearn.cluster import KMeans
 import json
+import matplotlib.pyplot as plt
 
 
 
@@ -198,22 +199,23 @@ def get_annonces():
 
 @app.route('/api/annonces/<annonceId>', methods=['GET'])
 def get_annonce(annonceId):
+    # Convertir annonceId en entier
+    annonceId = int(annonceId)
+
     try:
-        df = pd.read_json("resource/annonces.json")
-
+        # df = pd.read_json("resource/annonces.json")
+        
         annonces = []
-        # Convertir annonceId en entier
-        annonceId = int(annonceId)
-
-        for annonce in df["annonces"]:
-            if annonce.get('ID') == annonceId:
-                ID = annonce.get("ID")
-                URL = annonce.get("URL")
+        
+        for annonce in df.to_dict(orient='records'):
+            if annonce.get('list_id') == annonceId:
+                ID = annonce.get("list_id")
+                URL = annonce.get("url")
                 zipCode = annonce.get("zipcode")
-                Description = annonce.get("Description")
+                Description = annonce.get("body")
                 square = annonce.get("square")
                 rooms = annonce.get("rooms")
-                price = annonce.get("Price")
+                price = annonce.get("price")
 
                 annonces.append({
                     "id": ID,
@@ -800,20 +802,37 @@ def biens_similaires():
             profil_valeurs.append(item['value'])
             poids.append(item['weight'])
 
+        print(variables)
+        print(profil_valeurs)
+        print(poids)
+
         df_sub = df_filtred[variables].copy()  
 
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(df_sub)
 
+        print("1")
 
         # Dendogramme pour déterminer le nb de clusters => Ici 3 d'après le dendogramme
         linkage_matrix = linkage(X_scaled, method='ward')
+        plt.figure(figsize=(10, 7))
+
+        dendro = dendrogram(linkage_matrix)
+        colors_used = set(dendro['color_list'])
+        print(f"couleurs (clusters visuels) : {colors_used}")
+
+        plt.title('Dendrogramme avec la méthode de Ward')
+        plt.xlabel('Indices des échantillons')
+        plt.ylabel('Distance de Ward')
+        plt.show()
+        print("2")
 
         # Clustering hiérarchique
-        CHA = AgglomerativeClustering(n_clusters=3,linkage='ward')
+        CHA = AgglomerativeClustering(n_clusters=(len(colors_used)-1),linkage='ward')
         CHA.fit(X_scaled)
         labelsCHA =CHA.fit_predict(X_scaled)
         df_sub['clusterCHAScikit']=labelsCHA
+        print("3")
 
         # Vérification avec metrics
         labelsScikit = df_sub['clusterCHAScikit']
