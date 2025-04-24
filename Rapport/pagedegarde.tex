@@ -1,0 +1,188 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    Page de garde (Pagedegarde.tex)   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dorian Depriester, 2014
+\usepackage{fancyhdr}
+\usepackage{nomencl}
+\makeatletter
+\def\@ecole{école}
+\newcommand{\ecole}[1]{
+  \def\@ecole{#1}
+}
+
+\def\@entreprise{Nom de l'entreprise}
+\newcommand{\entreprise}[1]{
+  \def\@entreprise{#1}
+}
+
+\def\@datedebut{\today}
+\newcommand{\datedebut}[1]{
+  \def\@datedebut{#1}
+}
+
+
+\def\@datefin{\today}
+\newcommand{\datefin}[1]{
+  \def\@datefin{#1}
+}
+
+
+
+\def\@specialite{Spécialité}
+\newcommand{\specialite}[1]{
+  \def\@specialite{#1}
+}
+
+\def\@ED{\'{E}cole Doctorale}
+\newcommand{\ED}[1]{
+  \def\@ED{#1}
+}
+
+\def\@doctorat{Doctorat}
+\newcommand{\doctorat}[1]{
+  \def\@doctorat{#1}
+}
+
+\def\@adresse{Adresse}
+\newcommand{\adresse}[1]{
+  \def\@adresse{#1}
+}
+
+\def\@directeur{directeur}
+\newcommand{\directeur}[1]{
+  \def\@directeur{#1}
+}
+
+\def\@fonction{Développeur }
+\newcommand{\fonction}[1]{
+  \def\@fonction{#1}
+}
+
+\def\@encadrant{encadrant}
+\newcommand{\encadrant}[1]{
+  \def\@encadrant{#1}
+}
+\def\@jurya{}{}{}
+\newcommand{\jurya}[3]{
+  \def\@jurya{#1,	& #2	& #3\\}
+}
+\def\@juryb{}{}{}
+\newcommand{\juryb}[3]{
+  \def\@juryb{#1,	& #2	& #3\\}
+}
+\def\@juryc{}{}{}
+\newcommand{\juryc}[3]{
+  \def\@juryc{#1,	& #2	& #3\\}
+}
+\def\@juryd{}{}{}
+\newcommand{\juryd}[3]{
+  \def\@juryd{#1,	& #2	& #3\\}
+}
+\def\@jurye{}{}{}
+\newcommand{\jurye}[3]{
+  \def\@jurye{#1,	& #2	& #3\\}
+}
+\def\@juryf{}{}{}
+\newcommand{\juryf}[3]{
+  \def\@juryf{#1,	& #2	& #3\\}
+}
+\def\@juryg{}{}{}
+\newcommand{\juryg}[3]{
+  \def\@juryg{#1,	& #2	& #3\\}
+}
+\def\@juryh{}{}{}
+\newcommand{\juryh}[3]{
+  \def\@juryh{#1,	& #2	& #3\\}
+}
+\def\@juryi{}{}{}
+\newcommand{\juryi}[3]{
+  \def\@juryi{#1,	& #2	& #3\\}
+}
+\makeatother
+
+\newcommand\BackgroundPic{%
+	\put(0,0){%
+		\parbox[b][\paperheight]{\paperwidth}{%
+			\includegraphics[height=0.45\paperheight]{bordure.png}%
+			\vfill
+		}
+	}
+}
+\newcommand\EtiquetteThese{%
+	\put(0,0){%
+		\parbox[t][\paperheight]{\paperwidth}{%
+			\hfill
+			%\colorbox{blue}{		
+				\begin{minipage}[b]{2em}
+					\includegraphics[width=4.0\textwidth]{logo_miage.png}\\					
+					%\centering\Huge\textcolor{white}{M\\I\\A\\G\\E\\}
+					\vspace{0.2cm}
+				\end{minipage}
+			%}
+		}
+	}
+}
+
+\makeatletter
+\newcommand{\pagedegarde}{
+\newgeometry{top=2.5cm, bottom=1cm, left=1cm, right=1cm}
+\AddToShipoutPicture*{}
+%\AddToShipoutPicture*{\EtiquetteThese}
+  \begin{titlepage}
+  \centering
+      \includegraphics[width=0.6\textwidth]{logo_Paris_Nanterre_couleur_RVB.png}\\
+    \vspace{1cm}
+     % {\Large Licence MIASHS parcours MIAGE}\\
+    \vspace{5cm}
+   		
+    \vspace{1cm}
+    	{\huge\color[rgb]{0,0,1} \bfseries{\@title}}\\
+    \vspace{0.5cm}
+    {\bfseries Projet Durabil'immo}\\
+    %	{\Large{\bfseries Spécialité doctorale ``\@specialite''}}\\
+    \vspace{2cm}
+    	\textit{présenté et soutenu par}\\
+    \vspace{0.3cm}
+    	{\Large {\bfseries Florine PHILIPPE }} \\
+    \vspace{0.3cm}
+	{\Large {\bfseries Niraiksan RAVIMOHAN }} \\
+    \vspace{0.3cm}
+	{\Large {\bfseries Fanuel MEHARI }} \\
+    \vspace{0.3cm}
+    	le \@date \\
+    \vfill
+     %  {\LARGE \color[rgb]{0,0,1} \bfseries{\@title}} \\
+    %\vfill
+      %  Directeur de thèse : {\bfseries \@directeur}\\
+       % Co-encadrant de thèse : {\bfseries \@encadrant}\\
+    %\vfill
+	
+	%\includegraphics[width=0.20\textwidth]{logo_entreprise.png}\
+	\vfill
+	
+	%\@adresse
+  \end{titlepage}
+
+
+
+
+\restoregeometry  
+\makenomenclature
+
+\pagestyle{fancy}
+
+\renewcommand\headrulewidth{1pt}
+
+\fancyhead[L]{\@fonction}
+
+\fancyhead[R]{\@entreprise}
+
+
+\renewcommand\footrulewidth{1pt}
+
+\fancyfoot[L]{\@author}
+
+\fancyfoot[C]{}
+
+\fancyfoot[R]{ Page \thepage/\pageref{LastPage}}
+}

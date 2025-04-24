@@ -1,0 +1,821 @@
+\documentclass[a4paper, 12pt, twoside]{report}
+\usepackage[utf8]{inputenc}		% LaTeX, comprend les accents !
+\usepackage[T1]{fontenc}		
+\usepackage{babel}
+\usepackage{lmodern}
+\usepackage{ae,aecompl}
+\usepackage[top=2.5cm, bottom=2cm, 
+			left=3cm, right=2.5cm,
+			headheight=15pt]{geometry}
+\usepackage{graphicx}
+\usepackage{eso-pic}	% Nécessaire pour mettre des images en arrière plan
+\usepackage{array} 
+\usepackage{hyperref}
+\usepackage{lastpage}
+\usepackage{longtable}
+\definecolor{bleuleger}{RGB}{0,0,200}
+
+
+\usepackage{listings}
+\lstnewenvironment{codeC}[1][]
+{%
+	\lstset{language=C,
+		frame=single,
+		captionpos=b, 
+		backgroundcolor=\color{bleuleger!5},
+		basicstyle=\ttfamily\tiny,
+		numbers=left,
+		numberstyle=\color{black},
+		numbersep=5pt,
+		breaklines=true,
+		tabsize=4,
+		keywordstyle=\bfseries\color{green!40!black},
+		stringstyle=\color{red}\ttfamily,
+		identifierstyle=\color{blue},
+		caption={[#1]{#1}},           
+		commentstyle=\color{purple!40!black}}
+}
+{}
+\input{pagedegarde}
+
+
+\author{Florine PHILIPPE, Niraiksan RAVIMOHAN \& Fanuel MEHARI}
+\title{Rapport PSID}
+\entreprise{Durabil'immo}
+\fonction{Rapport PSID}
+
+\date{mai 2025}
+
+
+
+
+%\usepackage[firstpage]{draftwatermark}
+%\usepackage{tcolorbox}
+%\SetWatermarkText{Confidentiel}
+%\SetWatermarkScale{0.9}
+%\SetWatermarkColor{red!20}
+\begin{document}
+\pagedegarde
+
+\tableofcontents
+
+\chapter{Présentation de l'application}
+
+Notre application est conçue pour aider les agents immobiliers à se recentrer sur leur cœur de métier en optimisant leur temps de prospection sur le terrain. 
+
+Notre application offre un support complet pour collecter et organiser les informations, permettant ainsi aux agents de maximiser leur présence sur le terrain. Inspirée par des cours spécialisés et une analyse approfondie des concurrents, notre solution combine des fonctionnalités éprouvées avec des innovations uniques pour répondre aux besoins non satisfaits des agents immobiliers. Pour cela, notre application propose plusieurs fonctions :
+
+\begin{enumerate}
+            \item Permettre à l’agent immobilier de connaître parfaitement son secteur géographique
+            \item Anticiper les besoins des clients voulant acheter ou vendre un bien \\
+\end{enumerate}
+
+L'objectif est d'améliorer l'efficacité et l'expérience des agents, en leur fournissant un outil convivial et complet qui les aide à exceller dans leur métier.
+
+\section{Personas et fonctionnalités}
+
+Agent immobilier
+
+\begin{enumerate}
+            \item Prospection : Intégration de cartes pour localiser les biens sur une carte interactive.
+            \item Dashboard : Fournit un tableau de bord avec des graphiques, des courbes et des tableaux pour suivre et gérer l’inventaire des biens, l’activité, et offre des statistiques de marché.
+	\item Gestion des biens immobiliers : Permet d’ajouter, modifier, supprimer des annonces de biens, télécharger des photos, vidéos, et offre une alerte pour les nouveaux biens.
+	\item Gestion des clients (prospects) : Permet la gestion de clients potentiels, suit leurs préférences, et offre des rappels et notifications.
+	\item Gestion des offres et des négociations : Inclut le suivi des offres, des négociations et la documentation des transactions.
+	\item Gestion de projets potentiels : Enregistre les projets futurs des clients avec des rappels.
+	\item Agenda et planification : Offre un calendrier intégré avec des tâches, des rappels et des alertes.
+	\item Documents : Permet le suivi des documents et contrats, la création de supports marketing personnalisés, et la signature électronique.
+	\item Communication : Inclut des fonctionnalités de partage sur les réseaux sociaux, de messagerie instantanée, et d’envoi de notifications aux clients.
+	\item Formation et support : Offre des ressources de formation et un support client.
+	\item Outils de recherche avancée : Propose une recherche par emplacement, prix, type de bien, et d’autres critères pertinents. \\
+\end{enumerate}
+
+\chapter{Analytics}
+
+	\section{Objectif}
+
+	Notre objectif est d'analyser les annonces d'un site proposant des ventes de biens immobiliers. Cette analyse permettra à l'agent immobilier de :
+	\begin{enumerate}
+		\item {\bf Connaître le marché local en temps réel} \\
+		En analysant les annonces, l'agent immobilier peut savoir quels types de biens sont disponibles à quel prix et dans quels quartiers. Cela lui permet de mieux comprendre l'offre actuelle. L'ancienneté des annonces peut aussi être un indicateur précieux pour savoir quels biens sont plus difficiles à vendre.
+		\item {\bf Suivre l'évolution du marché} \\
+		Certains quartiers peuvent devenir plus populaires avec le temps, ou des zones peuvent subir des changements (nouvelles constructions, rénovations, etc.). Cela donne un aperçu précieux sur où il faut investir ou se concentrer.
+		\item {\bf Détecter les biens attrayants} \\
+		Certaines annonces reçoivent plus de {\it likes} ou d'intérêt. Cela peut aider l'agent immobilier à identifier les biens qui captent l'attention des acheteurs potentiels, ce qui pourrait être un bon signe pour savoir où concentrer ses efforts.
+		\item {\bf Identifier les biens qui peinent à se vendre} \\
+		Une annonce qui reste en ligne trop longtemps peut signaler un problème de prix, de description, ou d'emplacement. Cela permet à l'agent de mieux comprendre les raisons possibles des difficultés de vente.
+		\item {\bf Observer la concurrence} \\
+		En analysant les autres agences, l'agent peut voir quelles sont celles qui sont les plus présentes sur le marché et quelles stratégies elles adoptent. Cela permet d'adapter sa propre approche pour rester compétitif.
+		\item {\bf Améliorer ses propres annonces} \\
+		En observant ce qui fonctionne chez les autres, l'agent immobilier peut affiner ses propres annonces en améliorant des aspects comme les titres, les photos, ou les descriptions pour mieux capter l'attention des acheteurs potentiels. \\
+	\end{enumerate}
+
+	\section{Présentation du jeu de données}
+
+		\subsection{Présentation des données}
+
+		Notre jeu de données regroupe des données d’annonces immobilières. Ces annonces sont extraites du site leboncoin \cite{leboncoin}. Pour récupérer ces données, nous avons effectué du {\it web scraping} via un script Python. L'extraction des annonces en ligne a eu lieu le 30 mars 2025. Notre choix de scraper les données s'explique par le fait que ce type de données est peu accessible. \\
+
+		L'extraction porte sur les annonces immobilières du département des Hauts-de-Seine. Nous avons sélectionné un seul département car le temps d'extraction serait trop élevé pour une zone plus grande. Finalement, nous avons obtenu 1381 lignes dans notre jeu de données. Ces dernières concernent des annonces publiées en ligne entre novembre 2022 et mars 2025. \\
+
+		Les colonnes de notre fichier CSV, décrites dans le tableau Table \ref{tabColonne}, contiennent des informations sur :
+		\begin{enumerate}
+			\item {\bf L'annonce} \\
+			Exemples : url, description, boosté ou non (mise en avant payante sur la plateforme), nombre de mises en favori, s’il y a une visite virtuelle jointe à l’annonce…
+			\item {\bf La personne qui a publié l'annonce} \\
+			Exemples : nom, SIREN, type de vendeur/se (professionnel/le/particulier), type de mandat…
+			\item {\bf Le bien} \\
+			Exemples : localisation (ville, latitude et longitude), description, prix, nombre de m², nombre de pièces, lien de la visite virtuelle…
+		\end{enumerate}
+		
+		\begin{longtable}[c]{|c|c|c|}
+			\caption{Description du jeu de données : nom, type et description des colonnes \label{tabColonne}} \\
+			\hline
+			\multicolumn{3}{|c|}{Début de table} \\
+				\hline
+				{\bf Colonne} & {\bf Type} & {\bf Description} \\
+				\hline
+				list\_id & entier & Identifiant de l'annonce \\ 
+				\hline 
+				url & chaîne de caractères & URL de l'annonce \\ 
+				& & sur le site leboncoin \\ 
+				\hline 
+				price & réel & Prix fixé par le/la vendeur/se \\ 
+				\hline 
+				body & chaîne de caractères & Description de l'annonce \\ 
+				\hline 
+				subject & chaîne de caractères & Titre de l'annonce \\ 
+				\hline 
+				first\_publication\_date & date & Date de publication de l'annonce \\ 
+				\hline 
+				index\_date & date & Date de la dernière \\ 
+				& & modification de l'annonce \\ 
+				\hline 
+				status & étiquette ('active') & Présence de l'annonce en \\ 
+				& & ligne ('active' : présente en ligne) \\ 
+				\hline 
+				nb\_images & entier & Nombre d'images dans l'annonce \\ 
+				\hline 
+				country\_id & étiquette ('FR') & Identifiant du pays du bien \\ 
+				\hline 
+				region\_id & entier & Identifiant de la région du bien \\ 
+				\hline 
+				region\_name & chaîne de caractères & Nom de la région du bien \\ 
+				\hline 
+				department\_id & entier & Numéro du département du bien \\ 
+				\hline 
+				city & chaîne de caractères & Nom de la ville du bien \\ 
+				\hline 
+				zipcode & entier & Code postal du bien \\ 
+				\hline 
+				lat & réel & Latitude de l'adresse du bien \\ 
+				\hline 
+				lng & réel & Longitude de l'adresse du bien \\ 
+				\hline 
+				type & étiquette ('pro' & Type de vendeur/se ( \\ 
+				& ou 'private') & professionnel/le ou particulier) \\ 
+				\hline 
+				name & chaîne de caractères & Nom du/de la vendeur/se \\ 
+				\hline 
+				siren & entier & Numéro SIREN de l'agent \\ 
+				& & ou de l'agence immobilière \\ 
+				\hline 
+				has\_phone & booléen & Présence d'un numéro de \\ 
+				& & téléphone dans l'annonce \\ 
+				\hline 
+				is\_boosted & booléen & Vrai si l'annonce est \\ 
+				& & boostée (mise en \\ 
+				& & avant payante sur la \\ 
+				& & plateforme), faux sinon \\ 
+				\hline 
+				favorites & entier & Nombre de mises en \\ 
+				& & favori de l'annonce \\ 
+				\hline 
+				square & réel & Superficie en mètres carrés du bien \\ 
+				\hline 
+				land\_plot\_surface & réel & Superficie en mètres \\ 
+				& & carrés du terrain du bien \\ 
+				\hline 
+				rooms & entier & Nombre de pièces du bien \\ 
+				\hline 
+				bedrooms & entier & Nombre de chambres du bien \\ 
+				\hline 
+				nb\_bathrooms & entier & Nombre de salles de bain du bien \\ 
+				\hline 
+				nb\_shower\_room & entier & Nombre de salles d'eau du bien \\ 
+				\hline 
+			\endfirsthead
+			
+			\hline
+			\multicolumn{3}{|c|}{Fin de la table \ref{tabColonne}}\\
+				\hline
+				{\bf Colonne} & {\bf Type} & {\bf Description} \\
+				\hline
+				energy\_rate & étiquette (de & Classement du bien suite à la \\ 
+				& 'a' à 'g') & partie Énergie du diagnostic de \\ 
+				& & performance énergétique \\ 
+				& & ('a' : extrêmement  \\ 
+				& & performant à 'g' : \\
+				& & extrêmement peu performant) \\
+ 				\hline
+				ges & étiquette (de & Classement du bien suite à la \\ 
+				& 'a' à 'g') & partie Climat du diagnostic de \\ 
+				& & performance énergétique ('a' : \\ 
+				& & peu d'émission de gaz \\ 
+				& & à effet de serre à 'g' : \\ 
+				& & émission très importante) \\ 
+				\hline
+				heating\_type & étiquette ('communal' & Type de chauffage du bien \\
+				& ou 'individual') & \\ 
+				\hline
+				heating\_mode & étiquette ('electric', 'fuel', & Mode de chauffage de bien \\
+				& 'gas', 'solar' ou 'other') & \\ 
+				\hline
+				elevator & booléen & Nombre d'ascenseurs du bien \\ 
+				\hline
+				fees\_at\_the\_expanse\_of & étiquette ('buyer', 'seller' & Destinataire des frais \\
+				& ou 'buyer\_and\_seller') & \\ 
+				\hline
+				fai\_included & booléen & Vrai si les frais d'agence \\ 
+				& & sont inclus, faux sinon \\ 
+				\hline
+				mandate\_type & étiquette ('simple' & Type de mandat \\
+				& ou 'exclusive') & de l'agent immobilier \\ 
+				\hline
+				price\_per\_square\_meter & réel & Prix par mètres carrés du bien \\ 
+				\hline
+				immo\_sell\_type & étiquette ('new' & Ancienneté du bien \\ 
+				& ou 'old') & \\ 
+				\hline
+				nb\_floors & entier & Nombre d'étages du bien \\ 
+				\hline
+				nb\_parkings & entier & Nombre de parkings du bien \\ 
+				\hline
+				building\_year & entier & Date de construction du bien \\ 
+				\hline
+				virtual\_tour & chaîne de caractères & URL de la visite virtuelle du bien \\ 
+				\hline
+				old\_price & réel & Ancien prix du bien \\ 
+				\hline
+				annual\_charges & réel & Charges annuelles du bien \\ 
+				\hline
+				orientation & étiquette ( & Orientation du bien \\
+				& 'north', 'west', & \\
+				& 'east', 'south', & \\ 
+				& 'north\_west', & \\
+				& 'north\_east', & \\
+				& 'south\_west', & \\
+				& 'south\_east') & \\ 
+				\hline
+				is\_virtual\_tour & booléen & Vrai si l'annonce contient une \\ 
+				& & visite virtuelle, faux sinon \\ 
+				\hline
+			\endlastfoot
+		\end{longtable}
+
+		\subsection{Biais}
+
+		Cependant, l'analyse de notre jeu de données peut provoquer des biais. Les biais sont :
+		\begin{enumerate}
+			\item Les annonces récupérées n’étant que celles du site leboncoin, elles ne représentent pas réellement l’activité immobilière de la zone sélectionnée. En plus, les données sont sur une période restreinte (2022 à 2025) et donc pas représentative de la tendance du marché sur le long terme.
+			\item Les annonces du jeu de données correspondent à des biens pas encore vendus. Après l'achat d'un bien, son annonce n'est plus présente sur leboncoin. Juger le succès d’une annonce de manière précise s’avère donc difficile puisque les comparaisons entre les annonces de biens vendus et non vendus est impossible.
+			\item Compte tenu de la lenteur de l’extraction des données, le jeu de données contient 1381 annonces. Le nombre peu élevé d'annonces permet difficilement d’observer une tendance fiable.
+			\item Le prix proposé dans une annonce est le prix fixé par le/la vendeur/se. Ce n’est pas forcément le prix de vente.
+		\end{enumerate}
+		Notre analyse a été faite en prenant en compte la présence de ces biais. \\
+
+	\section{Traitement sur le jeu de données}
+
+		\subsection{Extraction d’informations supplémentaires}
+
+		En observant nos données, nous avons remarqué que :
+		\begin{enumerate}
+			\item Plusieurs annonces avaient des valeurs manquantes dans certaines colonnes mais ces valeurs pouvaient être présentes dans la description de l'annonce (colonne body) 
+			\item Plusieurs informations importantes étaient présentes dans la description de l'annonce mais ne correspondaient à aucune colonne du jeu de données. Par exemple, la description, décrite dans la Table \ref{tabExempleDescription}, indique la présence de transports en commun ("RER A à 5mn à pied") ou d'écoles ("proximité des écoles") à proximité du bien. Nous avons donc décidé d'ajouter des colonnes correspondant à ce type de données dans notre fichier CSV. Ces dernières sont décrites dans la Table \ref{tabColonnesAjoutees}. \\
+		\end{enumerate}
+
+		\begin{table}[h]
+			\begin{center}
+				\begin{tabular}{|c|}
+				\hline
+				Exemple de description \\
+				\hline 
+				Triangle d'Or Rueil-Malmaison, RER A à 5mn à pied, proximité \\
+				des écoles, bords de seine et au calme absolu ! Venez découvrir \\
+				notre agréable maison de famille de 134m2 au sol, dont 83m² \\
+				habitables. Distribuée sur 3 niveaux elle offre 3 chambres, un \\
+				garage aménageable de 32m² et un petit jardinet,. Poussez la \\
+				porte et c’est un espace de vie lumineux et modulable selon \\
+				vos envies, qui vous offre un premier plateau de 32m2, \\
+				actuellement aménagé en un séjour traversant de 22m², une \\
+				entrée de 5m² et une cuisine équipée de 6m². Un wc invité et \\
+				un accès au garage complètent ce niveau. \\
+				Les espaces nuits se situent en étages avec au premier niveau, \\
+				2 belles chambres, un dressing et une salle de bain avec wc. Le \\
+				niveau supérieur offre une troisième chambre avec divers \\
+				rangements sur le palier. Le bien propose également un grand \\
+				garage de 32m2 aménageable selon vos projets, comprenant le \\
+				local technique, un point d’eau aménagé en salle de douche et \\
+				un accès au jardin de 16m2. SES ATOUTS : quartier très prisé et \\
+				calme. Toutes les commodités accessibles à 5mn à pied, une \\
+				maison très bien entretenue où l’on se sent bien, parquet \\
+				impeccable, toiture et façades en très bon état, double vitrage, \\
+				possibilité d’aménagement à votre goût. N’hésitez plus, venez la visiter ! \\ 
+				\hline 
+				\end{tabular} 
+			\end{center}
+			\label{tabExempleDescription}
+			\caption{Description d'un bien : exemple d'une valeur de la colonne body du jeu de données}
+		\end{table}
+
+		\begin{table}[h]
+			\begin{center}
+				\begin{tabular}{|c|c|c|}
+				\hline
+				{\bf Colonne} & {\bf Type} & {\bf Description} \\
+				\hline 
+				transport\_exists\_nearby & booléen & Vrai si des transports en commun \\ 
+				& & sont à proximité du bien, faux sinon \\ 
+				\hline 
+				school\_exists\_nearby & booléen & Vrai si des écoles sont à \\ 
+				& & proximité du bien, faux sinon \\ 
+				\hline 
+				medical\_service\_exists\_nearby & booléen & Vrai si des services médicaux sont \\ 
+				& & à proximité du bien, faux sinon \\ 
+				\hline 
+				centre\_of\_town\_exists\_nearby & booléen & Vrai si le centre-ville est à \\ 
+				& & proximité du bien, faux sinon \\ 
+				\hline 
+				nb\_square\_meter\_basement & réel & Superficie en mètres carrés du sous-sol \\ 
+				\hline 
+				nb\_square\_meter\_balcony & réel & Superficie en mètres carrés de la terrasse \\ 
+				\hline 
+				\end{tabular} 
+			\end{center}
+			\label{tabColonnesAjoutees}
+			\caption{Description des colonnes ajoutées dans le jeu de données : nom, type et description des colonnes}
+		\end{table}
+
+		Pour extraire ces données, la solution a été d'utiliser un LLM, auquel on enverrait la description et qui nous renverrait les informations que nous recherchons. 
+		Nous avons donc écrit un programme Python réalisant cela. Nous avons utilisé la librairie ScrapeGraphAI \cite{scrapegraphai} qui permet de demander une requête, qui concerne une source de données que l'on passe en paramètre, à un LLM. Dans notre cas, la source de données est la description du bien. Dans notre code, nous allons boucler sur tout le fichier CSV et pour chaque annonce : 
+		\begin{enumerate}
+			\item Nous récupérons les noms des colonnes ayant des valeurs manquantes
+			\item Nous envoyons le {\it prompt} au LLM. Ce {\it prompt} contient :
+				\begin{enumerate}
+					\item Les noms des colonnes ayant des valeurs manquantes
+					\item Le format de réponse à respecter (format JSON)
+					\item Une description des formats attendus pour certaines valeurs (exemple : la colonne energy\_rate ne peut avoir que les caractères allant de 'a' à 'g' comme valeurs)
+				\end{enumerate}
+			\item Nous ajoutons, dans notre fichier, les valeurs récupérées via le LLM \\
+		\end{enumerate}
+
+		Pour le choix du LLM, nous avons essayé plusieurs méthodes :
+		\begin{enumerate}
+			\item {\bf Local} \\
+			Nous avons installé en local, via le logiciel ollama \cite{ollama}, plusieurs LLMs (llama3.2:1b, phi3:mini, gemma1.1:2b et mistral0.3:7b). Cependant, les informations extraites étaient insuffisantes ou inexactes et certaines informations de la description n'étaient pas récupérées. De plus, une requête prenait, en général, plusieurs minutes à s'exécuter, ce qui est lent puisqu'il faudrait exécuter 1381 requêtes (une requête par ligne). 
+			\item {\bf Distant} \\
+			Nous avons utilisé l'API Mistral \cite{mistralai}, qui est gratuite, et le modèle open-mistral-nemo 24.07 \cite{mistralnemo}, car ce dernier est performant dans un contexte multilingue et notamment en français. Des points de vue de la qualité des réponses (assez d'informations sont récupérées et les informations récupérées sont exactes) et de la rapidité d'exécution (une requête s'exécute en général en quelques secondes), cette méthode est plus performante que l'utilisation de modèles en local. Nous avons donc utilisé l'API Mistral et le modèle open-mistral-nemo 24.07. \\
+		\end{enumerate}
+
+		\subsection{Colonnes modifiées}
+
+		Nous avons également effectué d'autres modifications :
+		\begin{enumerate}
+			\item À la Suite de l'extraction de données via le LLM, certaines données n'étaient pas dans le bon format. Par exemple, pour la colonne land\_plot\_surface, les valeurs attendues doivent être des nombres réels. Cependant, il pouvait arriver que le LLM retourne un nombre réel suivi des caractères "m²". Dans ces cas-là, nous avons simplement retiré les caractères en trop pour conserver seulement le nombre.
+			\item Une colonne contenant des valeurs booléennes (colonne fai\_included) représentait la valeur "vrai" par le chiffre 1 et la valeur "faux" par le chiffre 2. Pour faciliter l'analyse, nous avons remplacé les valeurs pour les convertir dans un format 1 pour "vrai" et 0 pour "faux". 
+			\item Les annonces de viagers ont été supprimées car elles concernent un autre marché que celui que l'on souhaite analyser. Les conserver fausserait les prix et donc notre analyse.
+			\item Une colonne inutilisée (colonne elevator) a été supprimée.
+		\end{enumerate}
+
+	\section{Choix de l’analyse}
+
+	Nous avons eu plusieurs idées d'analyse :
+	\begin{enumerate}
+		\item Analyse des biens uniquement
+		\item Analyse des annonces \\
+	\end{enumerate}
+
+	Nous avons choisi d'effectuer une analyse des annonces puisqu'après une étude de notre jeu de données, nous avons réalisé que l’analyse centrée exclusivement sur les biens n’était pas adaptée à nos données. L'analyse des annonces en elles-mêmes plutôt que sur les biens s'est donc avérée être plus appropriée : nous avons estimé que des informations pertinentes pour l'agent immobilier pouvaient en être tirées. \\
+
+	\section{Analyse}
+
+		\subsection{Analyse générale}
+		
+		Dans cette section, nous allons effectuer une analyse générale des annonces disponibles.
+
+			\subsubsection{Répartition des annonces par type de vente}
+
+			Ce graphique (Figure \ref{repartitionAnnonceTypeVente}) représente la répartition des annonces par type de vente. \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{repartition\_annonce\_type\_vente.png}
+				\caption{Répartition des annonces par type de vente}
+				\label{repartitionAnnonceTypeVente}
+			\end{figure}
+
+			{\bf Utilité du graphique :} \\
+
+			Ce graphique permet à l’agent immobilier de visualiser le type de biens (ancien ({\it old}) ou neuf ({\it new})) le plus présent sur le marché. \\
+
+			{\bf Observation :} \\
+
+			Ici, les biens anciens représentent 92 \% des annonces, contre seulement 8 \% pour les biens neufs. Cela traduit une prédominance du marché ancien et peut aussi traduire un faible volume de construction dans le secteur. D’autre part, les biens neufs, plus rares, peuvent constituer un segment de différenciation à exploiter.
+
+			\subsubsection{Répartition des annonces par type de vendeur/se}
+
+			Ce graphique (Figure \ref{repartitionAnnonceTypeVendeur}) représente la répartition des annonces selon le type de vendeur/se (professionnel/le ou particulier). \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{repartition\_annonce\_type\_vendeur.png}
+				\caption{Répartition des annonces par type de vendeur/se}
+				\label{repartitionAnnonceTypeVendeur}
+			\end{figure}
+
+			{\bf Utilité du graphique :} \\
+
+			Il offre une vision claire de la concurrence et des tendances du marché. \\
+
+			{\bf Observation :} \\
+
+			Ici, 90 \% des annonces sont publiées par des professionnel/les et seulement 10 \% par des particuliers. Cela indique que les professionnel/les contrôlent largement le marché, ce qui peut signifier une concurrence accrue entre agents immobiliers. Cela suggère qu'il est essentiel de se différencier.
+
+			\subsubsection{Dates de publication des annonces}
+			
+			Ce graphique (Figure \ref{datesPublicationAnnonces}) place dans le temps les dates de publication des annonces. \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{dates\_publication\_annonces.png}
+				\caption{Dates de publication des annonces}
+				\label{datesPublicationAnnonces}
+			\end{figure}
+
+			{\bf Utilité du graphique :} \\
+
+			Il permet à l'agent immobilier savoir si une annonce est présente en ligne depuis longtemps ou non. Si c'est le cas, nous pouvons estimer que l'offre n'est pas assez convaincante pour de futur/es acheteurs/ses et nécessite donc d'être améliorée. \\
+
+			{\bf Observation :} \\
+
+			La plus ancienne annonce a été publiée le 11 novembre 2022 alors que la plus récente l'a été le 28 mars 2025. La date médiane est le 26 février 2025 et on remarque que la plupart des annonces sont récentes par rapport à la date d'extraction puisque 50 \% de celles-ci sont apparues entre le 13 janvier et le 14 mars 2025. De plus, des valeurs extrêmes sont présentes. En effet, seulement 4 annonces furent publiées avant 2024. Malgré leur durée d'accessibilité en ligne plus élevée, celles-ci n'ont pas trouvé preneur/se. \\
+			
+		\subsection{Analyse des biens}
+			
+			Dans cette section, nous allons effectuer une analyse des biens.
+
+			\subsubsection{Regroupement des biens similaires}
+
+			Ce {\it biplot} (Figure \ref{regroupementBiensSimilaires}) représente des groupes similaires de biens. Nous avons effectué une ACP sur les variables et une classification {\it K-means}. Nous avons conservé les dimensions 1 et 2 de l’ACP :
+			\begin{enumerate}
+				\item Dim1 est liée aux variables square, room et bedrooms et reflète les caractéristiques physiques des biens. 
+				\item Dim2 est basée sur energy\_rate et ges et reflète la performance énergétique des biens. \\
+			\end{enumerate}
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{regroupement\_biens\_similaires.png}
+				\caption{Regroupement des biens similaires}
+				\label{regroupementBiensSimilaires}
+			\end{figure}
+
+			{\bf Utilité du graphique :} \\
+
+			Ce {\it biplot} permet de segmenter les biens immobiliers selon leurs caractéristiques principales, en identifiant des groupes similaires. \\
+				
+			{\bf Observations :} \\
+
+			\begin{enumerate}
+				\item Le cluster 0 regroupe des grands biens avec de nombreuses pièces mais une performance énergétique variable. Le cluster 1 contient des biens plus petits avec moins de pièces et une performance énergétique variée. Le cluster 3 inclut des biens avec une haute performance énergétique, bien que leur taille varie. Enfin, le cluster 2 correspond à des biens de taille variable et de faible performance énergétique.
+				\item Dans le graphique de répartition des {\it clusters} (Figure \ref{repartitionClusters}), nous pouvons observer que la majorité des biens (45 \%) est de petite taille avec une performance énergétique variable, ce qui correspond à une forte demande pour des biens abordables. 21 \% des biens ont une faible consommation énergétique et une taille variable, ce qui correspond à un marché de niche pour les clients soucieux de l'environnement. 20 \% des biens sont grands mais avec une performance énergétique variable, ce qui peut attirer les familles, mais nécessite de travailler sur leur efficacité énergétique. Enfin, 13 \% des biens consomment beaucoup d'énergie, ce qui peut rendre leur vente plus difficile.
+			\end{enumerate}
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{repartition\_clusters.png}
+				\caption{Répartition des {\it clusters}}
+				\label{repartitionClusters}
+			\end{figure}
+
+			\subsubsection{Années de construction par ville}
+
+			{\bf Utilité du graphique :} \\
+
+			Ce graphique (Figure \ref{anneesConstructionVille}) permet d'observer, pour chaque ville, si les biens à vendre sont plutôt anciens ou récents. \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{annees\_construction\_ville.png}
+				\caption{Années de construction par ville}
+				\label{anneesConstructionVille}
+			\end{figure}
+
+			{\bf Observation :} \\
+
+			Dans la majorité des villes, la plupart des maisons en vente ont été construites entre 1900 et 2000. Certaines communes, comme Bagneux, Colombes ou Nanterre, présentent également des biens plus anciens, datant parfois de 1800 à 1850. On observe aussi, dans la plupart des villes, la présence de biens construits après 2000, mais en très faible proportion. Cela indique que le marché immobilier est principalement composé de logements anciens, ce qui peut refléter un parc immobilier relativement âgé, avec potentiellement des besoins en rénovation ou en mise aux normes. La faible présence de biens récents suggère un rythme de construction neuve peu soutenu dans ces zones, ce qui peut impacter l’offre disponible pour les acheteurs recherchant des logements modernes.
+
+			\subsubsection{Corrélation entre le prix annoncé et les autres variables}
+
+			{\bf Utilité du graphique :} \\
+
+			Ce graphique (Figure \ref{correlationPrixAutresVariables}) permet de comprendre comment les différentes caractéristiques d'un bien influencent le prix d'annonce. \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{correlation\_prix\_autres\_variables.png}
+				\caption{Corrélations entre le prix annoncé et les autres variables}
+				\label{correlationPrixAutresVariables}
+			\end{figure}
+
+			{\bf Observation :} \\
+
+			Les variables les plus corrélées avec le prix d'annonce sont bedrooms, room et square, avec une corrélation positive. Cela signifie que le prix augmente à mesure que la taille de la maison croît. Cependant, cela paraît étrange, car d'autres variables semblent moins corrélées avec le prix d'annonce. Cela peut être normal, ou pourrait indiquer que les prix fixés dans les annonces ne sont pas représentatifs. En effet, le prix devrait normalement être influencé par d'autres facteurs tels que le quartier, le score de consommation énergétique, le score des services, etc. \\
+
+		\subsection{Tendances du marché par ville}
+
+			Dans cette section, nous allons effectuer une analyse des tendances du marché par ville.
+
+			\subsubsection{Nombre d’annonces par ville}
+
+			{\bf Utilité du graphique :} \\
+
+			Ce graphique (Figure \ref{nombreAnnoncesAgence}) permet d’identifier les villes où l’offre immobilière est la plus concentrée, celles qui sont les plus actives en termes de diffusion d’annonces. Il aide ainsi à repérer les zones dynamiques du marché. \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{nombre\_annonces\_agence.png}
+				\caption{Nombre d’annonces par ville}
+				\label{nombreAnnoncesAgence}
+			\end{figure}
+
+			{\bf Observation :} \\
+
+			On observe que les villes comptant le plus grand nombre d’annonces sont Colombes, Rueil-Malmaison, Antony, Clamart et Nanterre. Cela indique que, dans le département des Hauts-de-Seine (92), ces communes représentent actuellement les zones les plus dynamiques en termes d’offre immobilière. Pour un agent immobilier, cela peut représenter un intérêt stratégique de concentrer davantage ses efforts sur ces secteurs porteurs.
+
+			\subsubsection{Offres récentes et favoris}
+
+			{\bf Utilité du graphique :} \\
+
+			Ce graphique (Figure \ref{offresRecentesFavoris15jours}) permet d’identifier les villes les plus dynamiques sur une période donnée et d’évaluer si ces zones ont suscité de l’intérêt de la part des clients sur cette période. \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{offres\_recentes\_favoris\_15jours.png}
+				\caption{Offres récentes et favoris sur les 15 derniers jours}
+				\label{offresRecentesFavoris15jours}
+			\end{figure}
+
+			{\bf Observation :} \\
+			
+			Au cours des 15 derniers jours, de nombreuses annonces ont été publiées à Rueil-Malmaison, mais la réactivité des clients n’a pas été au rendez-vous, avec peu d’interactions. En revanche, à Clamart, bien que de nombreuses annonces aient également été publiées, la réactivité des clients a été plus forte, faisant de cette ville celle qui a généré le plus d’intérêt en moyenne durant cette période. Quant à Antony, les annonces n’ont pas rencontré de succès.
+
+			Sur les 12 derniers mois (Figure \ref{offresRecentesFavoris1an}), les annonces des villes Ville-d’Avray, Gennevilliers, Sèvres et Vanves ont plutôt bien fonctionné.
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{offres\_recentes\_favoris\_1an.png}
+				\caption{Offres récentes et favoris sur les 12 derniers mois}
+				\label{offresRecentesFavoris1an}
+			\end{figure}	
+
+			Ce sont ces villes à succès que l’agent immobilier doit surveiller de près pour orienter ses actions de prospection.
+
+			\subsubsection{Analyse des concurrents}
+
+			{\bf Utilité du graphique :} \\
+
+			Ce graphique (Figure \ref{nombreAnnoncesAgence}) permet d'analyser l'activité des agences en comparant le nombre d'annonces, offrant ainsi des {\it insights} sur la concurrence et permettant d'ajuster les stratégies commerciales. \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{nombre\_annonces\_agence.png}
+				\caption{Nombre d'annonces par agence}
+				\label{nombreAnnoncesAgence}
+			\end{figure}	
+
+			{\bf Observation :} \\
+
+			Les agences les plus présentes sont SARL Davidson, Peclers Immobilier, Maisons Pierre et JDC Conseil. L'agent immobilier doit donc analyser ces concurrents afin de se différencier en offrant des services de meilleure qualité. \\
+
+		\subsection{Analyse des annonces}
+
+		Dans cette section, nous allons effectuer une analyse des annonces. Avant l'analyse, nous devons préciser plusieurs éléments :
+		\begin{enumerate}
+				\item Comme le jeu de données ne possède pas des annonces de biens déjà vendus, nous évaluons le succès d'une annonce à son nombre de mises en favori.
+				\item Analyser le nombre de mises en favori des annonces sans prendre en compte leur durée passée en ligne provoquerait un biais. En effet, une annonce publiée antérieurement à une autre risque d'obtenir plus de mises en favori que cette dernière, compte tenu de sa durée d'accessibilité plus élevée. Ainsi, nous avons réparti les données par mois afin de corriger ce biais. Cependant, cette correction est partielle puisqu'il subsiste une différence de temps entre la date de publication en début et en fin de mois.
+				\item Pour les graphiques de cette section, seuls les mois ayant chaque type d'annonces souhaité sont conservées. Par exemple, pour le graphique "Distribution moyenne de mises en favori par annonce" (\ref{secDistributionFavoriBoost}), les mois ayant seulement des annonces boostées ou seulement des annonces non boostées ne sont pas gardés, la comparaison entre les annonces boostées et non boostées étant impossible.
+		\end{enumerate}
+
+			\subsubsection{Distribution moyenne de mises en favori par annonce selon le boost}
+			\label{secDistributionFavoriBoost}
+
+			Ce graphique (Figure \ref{distributionFavoriBoost}) représente, par mois, le nombre moyen de mises en favori par annonce selon si elle est boostée ou non. Une annonce boostée est une annonce qui est mise en avant par la plateforme en échange d'un paiement. Le bien concerné est ainsi censé trouver preneur/se plus rapidement. \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{distribution\_favori\_boost.png}
+				\caption{Distribution moyenne de mises en favori par annonce selon le boost}
+				\label{distributionFavoriBoost}
+			\end{figure}	
+
+			{\bf Utilité du graphique :} \\
+
+			Ce graphique permet à l'agent immobilier de savoir si "booster" une annonce a réellement une influence sur son succès. \\
+
+			{\bf Observation :} \\
+			
+			Nous constatons que, paradoxalement, une annonce boostée a souvent moins de succès qu'une annonce non boostée. En effet, sur les 14 mois sélectionnés, huit voient le nombre moyen de mises en favori par annonce non boostée dépasser celui par annonce boostée. Dans certains cas (3/2024 ou 5/2024), la différence est très élevée (exemple 3/2024 : boostée = 35,3 mises en favori \& non boostée = 284 mises en favori). Il semble donc qu'il n'est pas utile, pour l'offreur, de "booster" son annonce. Cependant, l'absence des annonces de biens vendus nuance ce résultat. Par exemple, en mars 2024, il ne serait pas surprenant d'imaginer que si les biens boostés déjà vendus étaient pris en compte, le nombre moyen de mises en favori soit beaucoup plus élevé.
+
+			\subsubsection{Distribution moyenne de mises en favori par type de vendeur/se}
+
+			Ce graphique (Figure \ref{distributionFavoriTypeVendeur}) représente, par mois, le nombre moyen de mises en favori par annonce selon le type de vendeur/se (professionel/le ou particulier). \\
+
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.5]{distribution\_favori\_type\_vendeur.png}
+				\caption{Distribution moyenne de mises en favori par type de vendeur/se}
+				\label{distributionFavoriTypeVendeur}
+			\end{figure}	
+
+			{\bf Utilité du graphique :} \\
+
+			Ce graphique permet à l'agent immobilier de savoir si le fait d'être un/e professionnelle favorise le succès d'une annonce. \\
+
+			{\bf Observation :} \\
+	
+			Nous constatons que, sur les trois mois sélectionnés, une annonce d'un particulier a toujours plus de succès qu'une annonce d'un/e professionel/le. Cependant, l'absence des annonces de biens vendus pourrait nous laisser penser que les biens proposés par des professionnels/lles ont, en moyenne, moins de mises en favori car, parmi ces biens, beaucoup ont trouvé preneur/se alors que ceux des particuliers sont populaires virtuellement mais très peu achetés. De plus, toutes les annonces antérieures à 2025 (non présentes sur le graphique) sont des annonces professionnelles. Cela peut signifier soit que les biens proposés par des particuliers ont tous trouvé preneur/se, soit que les annonces professionnelles sont majoritaires par rapport à celles des particuliers. Dans la première situation, cela indiquerait à l'agent immobilier qu'être professionnel/le n'est pas une garantie de succès dans la vente d'un bien. Le deuxième cas pourrait simplement être la conséquence d'une activité de ventes plus grande chez les agents, ce qui semblerait logique et n'indiquerait pas forcément un manque d'attractivité pour les annonces professionnelles. \\
+
+		\subsection{Carte interactive}
+		
+		La carte interactive, respectivement dans les affichages par villes, par zones ({\it clusters}) et par zones ({\it heatmap}) dans les Figures \ref{carteVillesAnnonces}, \ref{carteZonesClusters} et \ref{carteZonesHeatmap}, permet à l'agent immobilier d'accéder à une carte géographique centrée sur son territoire, les Hauts-de-Seine. \\
+
+		\begin{figure}[h]
+			\centering
+			\includegraphics[scale=0.25]{carte\_villes\_annonces.png}
+			\caption{Carte interactive par villes : mode "Annonces"}
+			\label{carteVillesAnnonces}
+		\end{figure}	
+
+		\begin{figure}[h]
+			\centering
+			\includegraphics[scale=0.25]{carte\_zones\_clusters.png}
+			\caption{Carte interactive par zones : {\it clusters}}
+			\label{carteZonesClusters}
+		\end{figure}	
+
+		\begin{figure}[h]
+			\centering
+			\includegraphics[scale=0.25]{carte\_zones\_heatmap.png}
+			\caption{Carte interactive par zones : {\it heatmap}}
+			\label{carteZonesHeatmap}
+		\end{figure}	
+
+		Cette carte propose deux modes de visualisation : \\
+		\begin{enumerate}
+			\item {\bf Le mode "Annonces" (Figure \ref{carteVillesAnnonces})} \\
+			Il affiche le volume d’annonces par commune. Les communes sont colorées selon leur niveau d’activité :
+			\begin{enumerate}
+				\item Les teintes qui se rapprochent du rouge représentent des volumes élevés d’annonces
+				\item Les teintes qui se rapprochent du vert indiquent une faible activité
+			\end{enumerate}
+			Cela permet de :
+			\begin{enumerate}
+				\item Repérer les zones très actives comme Colombes, Nanterre, Rueil-Malmaison, Antony et Clamart, où l’offre est abondante.
+				\item Observer les zones sous-exploitées, notamment les villes de la petite couronne, où très peu d’annonces sont présentes. Ces zones représentent une opportunité forte de prise de mandat. \\
+			\end{enumerate}
+			\item {\bf Le mode "Prix" (Figure \ref{carteVillesPrix})} \\
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.25]{carte\_villes\_prix.png}
+				\caption{Carte interactive par villes : mode "Prix"}
+				\label{carteVillesPrix}
+			\end{figure}	
+			Il affiche le prix moyen au m² par secteur. Les communes sont colorées selon leur niveau d’activité :
+			\begin{enumerate}
+				\item Les teintes qui se rapprochent du rouge représentent des prix élevés
+				\item Les teintes qui se rapprochent du vert indiquent des prix bas
+			\end{enumerate}
+			Nous observons donc que :
+			\begin{enumerate}
+				\item Villeneuve-la-Garenne ressort comme la ville la moins chère.
+				\item Levallois-Perret ressort comme la ville la plus chère avec un prix record de 11 009 €/m², mais très peu d’annonces (seulement 3).
+			\end{enumerate}
+			On observe un gradient de prix classique : plus on se rapproche de Paris, plus les prix augmentent.
+		\end{enumerate}
+
+		L’utilité ici est que le croisement de ces deux vues permette de comparer offre et attractivité. Tout cela permet aux agents d’identifier en un coup d’œil les zones en tension, les poches d’opportunités ou de blocage. \\
+
+		La carte possède plusieurs filtres :
+
+		\begin{enumerate}
+			\item Un filtre (Figure \ref{carteVillesAnnoncesPopulaires}) permet d’afficher les biens ayant généré le plus de {\it likes} (jusqu’à 1554 favoris à Suresnes). On observe : 
+			\begin{enumerate}
+				\item Une activité diffuse mais modérée dans le sud (100 à 600 {\it likes}).
+				\item Des “pépites” centrales comme à Sèvres, Saint-Cloud, Rueil-Malmaison.
+			\end{enumerate}
+			Cela permet à l’agent de :
+			\begin{enumerate}
+				\item Identifier les types de biens qui attirent l’attention.
+				\item Comprendre ce qui déclenche l’engagement (prix, qualité de la présentation, type de bien, quartier).
+				\item Reproduire les recettes gagnantes pour ses propres annonces. \\
+			\end{enumerate}
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.25]{carte\_villes\_annonces\_populaires.png}
+				\caption{Carte interactive : filtre "Annonces populaires"}
+				\label{carteVillesAnnoncesPopulaires}
+			\end{figure}	
+
+			\item Un filtre (Figure \ref{carteVillesAnnoncesStagnantes}) permet d'afficher les annonces restées longtemps en ligne (parfois plus de 400 jours à Montrouge ou à Clamart). On en observe une forte concentration à Antony et Fontenay-aux-Roses, dans le sud des Hauts de Seine, ce qui indique un désalignement avec la demande (prix trop élevés, mauvaise valorisation, etc.). \\
+			 Cela permet à l'agent de :
+			\begin{enumerate}
+				\item Repérer les biens surestimés à reprendre.
+				\item Proposer au vendeur d’adapter sa stratégie : repositionnement du prix, amélioration de l’annonce, renforcement du discours client. \\
+			\end{enumerate}
+			\begin{figure}[h]
+				\centering
+				\includegraphics[scale=0.25]{carte\_villes\_annonces\_stagnantes.png}
+				\caption{Carte interactive : filtre "Annonces stagnantes"}
+				\label{carteVillesAnnoncesStagnantes}
+			\end{figure}	
+		\end{enumerate}
+
+		En cliquant sur une commune (Figure \ref{carteCommuneDetails}), un panneau latéral affiche :
+		\begin{enumerate}
+			\item Le nombre d’annonces
+			\item Le prix moyen au m²
+			\item Et potentiellement d’autres données (indications sur la ville, type de biens, évolution…)
+		\end{enumerate}
+		\begin{figure}[h]
+			\centering
+			\includegraphics[scale=0.25]{carte\_commune\_details.png}
+			\caption{Carte interactive : informations détaillées pour une commune}
+			\label{carteCommuneDetails}
+		\end{figure}	
+		De plus, l’agent peut ajouter ses propres observations locales, comme :
+		\begin{enumerate}
+			\item Des projets d’urbanisme
+			\item De nouvelles infrastructures
+			\item Sa perception de la qualité de vie
+		\end{enumerate}
+		Cette couche qualitative enrichit la donnée brute et permet de mieux contextualiser les chiffres. \\
+
+		Pour guider les agents dans l’interprétation des données, nous avons intégré un module de questionnement stratégique, avec des questions comme :
+		\begin{enumerate}
+			\item Pourquoi certains biens stagnent-ils ?
+			\item Pourquoi cette zone est-elle saturée ?
+			\item Pourquoi ce bien est-il populaire ?
+		\end{enumerate}
+		Ces questions sont autant de points de départ pour une analyse terrain fine et un discours argumenté face aux clients. Les observations tirées de l’analyse, présentes sous la carte (Figure \ref{conseils}), ont une dimension immédiatement opérationnelle :
+		\begin{enumerate}
+			\item La rareté de l’offre en petite couronne représente un argument fort pour convaincre un vendeur.
+			\item Les biens populaires sont des modèles à suivre pour booster la présentation de ses annonces.
+			\item Les biens stagnants sont des opportunités de se positionner comme solution face à des propriétaires déçus.
+			\item Les zones à forte activité représentent des besoins de se différencier par une expertise locale renforcée.
+		\end{enumerate}
+		\begin{figure}[h]
+			\centering
+			\includegraphics[scale=0.25]{analyse\_conseils.png}
+			\caption{Conseils stratégiques : conseils issus de notre analyse}
+			\label{conseils}
+		\end{figure}	
+
+\chapter{Machine learning}
+
+\section{Principe}
+
+\subsection{Idées}
+
+prédiction de prix des biens par rapport au caractéristiques des biens => on rejette parce que on a l’impression que notre dataset est pas adapté
+analyser la description de l’annonce pour savoir si la description est bien ou pa
+
+\subsection{Principe retenu}
+
+idée retenu : recommandation de bien similaire à un bien qu’on donne, en donnant des caractéristiques avec un score d’intérêt  par caractéristiques (dans le front) => pour trouver des biens similaires
+clustering des biens qui se ressemblent par rapport à des variables, leur score d’intérêt 
+
+\section{Nettoyage des données}
+
+\section{Transformation des données}
+
+\section{Sélection des modèles}
+
+\section{Entraînement}
+
+\section{Optimisation des hyperparamètres}
+
+\section{ACP, réduction de dimension}
+
+\section{Validation croisée}
+
+\renewcommand{\bibname}{Webographie}
+\addcontentsline{toc}{chapter}{Webographie}
+\begin{thebibliography}{2}
+   \bibitem[leboncoin]{leboncoin} \url{leboncoin.fr}
+   \bibitem[ScrapeGraphAI]{scrapegraphai} \url{scrapegraph-ai.readthedocs.io/en/latest/}
+   \bibitem[Ollama]{ollama} \url{ollama.com}
+   \bibitem[Mistral AI]{mistralai} \url{mistral.ai}
+   \bibitem[Mistral Nemo]{mistralnemo} \url{mistral.ai/news/mistral-nemo}
+\end{thebibliography}
+
+\end{document}

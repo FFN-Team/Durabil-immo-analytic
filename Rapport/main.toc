@@ -1,0 +1,41 @@
+\babel@toc {nil}{}\relax 
+\contentsline {chapter}{\numberline {1}Présentation de l'application}{3}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Personas et fonctionnalités}{3}{section.1.1}%
+\contentsline {chapter}{\numberline {2}Analytics}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Objectif}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Présentation du jeu de données}{6}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Présentation des données}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Biais}{8}{subsection.2.2.2}%
+\contentsline {section}{\numberline {2.3}Traitement sur le jeu de données}{9}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Extraction d’informations supplémentaires}{9}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Colonnes modifiées}{11}{subsection.2.3.2}%
+\contentsline {section}{\numberline {2.4}Choix de l’analyse}{11}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Analyse}{12}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Analyse générale}{12}{subsection.2.5.1}%
+\contentsline {subsubsection}{Répartition des annonces par type de vente}{12}{section*.2}%
+\contentsline {subsubsection}{Répartition des annonces par type de vendeur/se}{13}{section*.3}%
+\contentsline {subsubsection}{Dates de publication des annonces}{13}{section*.4}%
+\contentsline {subsection}{\numberline {2.5.2}Analyse des biens}{14}{subsection.2.5.2}%
+\contentsline {subsubsection}{Regroupement des biens similaires}{14}{section*.5}%
+\contentsline {subsubsection}{Années de construction par ville}{15}{section*.6}%
+\contentsline {subsubsection}{Corrélation entre le prix annoncé et les autres variables}{16}{section*.7}%
+\contentsline {subsection}{\numberline {2.5.3}Tendances du marché par ville}{16}{subsection.2.5.3}%
+\contentsline {subsubsection}{Nombre d’annonces par ville}{16}{section*.8}%
+\contentsline {subsubsection}{Offres récentes et favoris}{17}{section*.9}%
+\contentsline {subsubsection}{Analyse des concurrents}{18}{section*.10}%
+\contentsline {subsection}{\numberline {2.5.4}Analyse des annonces}{18}{subsection.2.5.4}%
+\contentsline {subsubsection}{Distribution moyenne de mises en favori par annonce selon le boost}{19}{section*.11}%
+\contentsline {subsubsection}{Distribution moyenne de mises en favori par type de vendeur/se}{20}{section*.12}%
+\contentsline {subsection}{\numberline {2.5.5}Carte interactive}{21}{subsection.2.5.5}%
+\contentsline {chapter}{\numberline {3}Machine learning}{29}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Principe}{29}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Idées}{29}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Principe retenu}{29}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Nettoyage des données}{29}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Transformation des données}{29}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Sélection des modèles}{29}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Entraînement}{29}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Optimisation des hyperparamètres}{29}{section.3.6}%
+\contentsline {section}{\numberline {3.7}ACP, réduction de dimension}{29}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Validation croisée}{29}{section.3.8}%
+\contentsline {chapter}{Webographie}{29}{section.3.8}%
