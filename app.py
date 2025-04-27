@@ -16,6 +16,8 @@ from sklearn import metrics
 from sklearn.cluster import KMeans
 import json
 import matplotlib.pyplot as plt
+import joblib
+
 
 
 
@@ -787,94 +789,121 @@ def getCity(zipCode):
 
 ######################################################
 ######################################################
+@app.route('/cities')
+def cities() : 
+    all_cities = df['city'].drop_duplicates()  # pour avoir seulement les valeurs uniques
+    print(all_cities)
+    return all_cities.to_json(orient="records")
 
+
+
+
+######################################################
+######################################################
+
+# @app.route('/biens-similaires')
 @app.route('/biens-similaires', methods=['POST'])
 def biens_similaires():
     try:
         data = request.get_json()
+        # data = {
+        #     "filtres_names": ["price", "city", "square", "land_plot_surface", "school_exists_nearby"],
+        #     "filtres_vals": {
+        #         "price": 4000,
+        #         "city": "Nanterre",
+        #         "square": 180,
+        #         "land_plot_surface": 300,
+        #         'school_exists_nearby': 1
+        #     },
+        #     "poids" : {
+        #         "price": 1,
+        #         "city": 1,
+        #         "square": 1,
+        #         "land_plot_surface": 5,
+        #         'school_exists_nearby': 1
+        #     }
+        # }
 
-        variables = []
-        profil_valeurs = []
-        poids = []
+        filtres_names = data['filtres_names']
+        filtres_vals = data['filtres_vals']
+        poids_filtres = data['poids']
 
-        for item in data:
-            variables.append(item['name'])
-            profil_valeurs.append(item['value'])
-            poids.append(item['weight'])
+        model_folder_path = ""
+        model_nature = ""
+        cluster_pred = ""
 
-        print(variables)
-        print(profil_valeurs)
-        print(poids)
-
-        df_sub = df_filtred[variables].copy()  
-
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(df_sub)
-
-        print("1")
-
-        # Dendogramme pour déterminer le nb de clusters => Ici 3 d'après le dendogramme
-        linkage_matrix = linkage(X_scaled, method='ward')
-        plt.figure(figsize=(10, 7))
-
-        dendro = dendrogram(linkage_matrix)
-        colors_used = set(dendro['color_list'])
-        print(f"couleurs (clusters visuels) : {colors_used}")
-
-        plt.title('Dendrogramme avec la méthode de Ward')
-        plt.xlabel('Indices des échantillons')
-        plt.ylabel('Distance de Ward')
-        plt.show()
-        print("2")
-
-        # Clustering hiérarchique
-        CHA = AgglomerativeClustering(n_clusters=(len(colors_used)-1),linkage='ward')
-        CHA.fit(X_scaled)
-        labelsCHA =CHA.fit_predict(X_scaled)
-        df_sub['clusterCHAScikit']=labelsCHA
-        print("3")
-
-        # Vérification avec metrics
-        labelsScikit = df_sub['clusterCHAScikit']
-        print(f"Silhouette Score (CAH) : {metrics.silhouette_score(X_scaled, labelsScikit):.9f}")
-        print(f"Davies-Bouldin Score (CAH) : {metrics.davies_bouldin_score(X_scaled, labelsScikit):.9f}")
-
-        print("1")
-        # Profil utilisateur
-        profil_scaled = scaler.transform([profil_valeurs])[0]
-        print("2")
-        # Trouver le cluster le plus proche du profil
-        cluster_centers = df_sub.groupby('clusterCHAScikit').mean()[variables]
-        cluster_centers_scaled = scaler.transform(cluster_centers)
-        print("3")
-        dists = cdist([profil_scaled], cluster_centers_scaled, metric='euclidean')
-        cluster_proche = cluster_centers.index[np.argmin(dists)]
-        print("4")
-        # On filtre les biens dans le cluster trouvé
-        candidats = df_sub[df_sub['clusterCHAScikit'] == cluster_proche].copy()
-        print("5")
-        # On calcule la distance pondérée entre chaque bien et le profil
-        candidats_scaled = scaler.transform(candidats[variables])
-        print("6")
-        dists_personnalisees = np.sum(poids * (candidats_scaled - profil_scaled)**2, axis=1)
-        candidats['distance'] = dists_personnalisees
+        if((len(filtres_names)==4) and (all(filtre in filtres_names for filtre in ['price', 'city', 'square', 'land_plot_surface']))) :
+            model_folder_path = "model_ML/Combi/ORV/"
+            model_nature = "kmeans"
         
-        print("7")
-        # Trier et recommander les 5 plus proches
-        recommandations = candidats.sort_values('distance').head(5)
-        recommandations['id'] = recommandations.index
-        recommandations['list_id'] = df_filtred['list_id'].iloc[recommandations['id']].astype('int64')
+        if((len(filtres_names)==5) and (all(filtre in filtres_names for filtre in ['price', 'city', 'square', 'land_plot_surface', 'transport_exists_nearby']))) :
+            model_folder_path = "model_ML/Combi/Trans/"
+            model_nature = "kmeans"
+
+        if((len(filtres_names)==6) and (all(filtre in filtres_names for filtre in ['price', 'city', 'square', 'land_plot_surface', 'transport_exists_nearby', 'school_exists_nearby']))) :
+            model_folder_path = "model_ML/Combi/Trans_Sch/"
+            model_nature = "kmeans"
+
+        if((len(filtres_names)==6) and (all(filtre in filtres_names for filtre in ['price', 'city', 'square', 'land_plot_surface', 'transport_exists_nearby', 'medical_service_exists_nearby']))) :
+            model_folder_path = "model_ML/Combi/Trans_Med/"
+            model_nature = "cah"
+
+        if((len(filtres_names)==7) and (all(filtre in filtres_names for filtre in ['price', 'city', 'square', 'land_plot_surface', 'transport_exists_nearby', 'school_exists_nearby', 'medical_service_exists_nearby']))) :
+            model_folder_path = "model_ML/Combi/Trans_Sch_Med/"
+            model_nature = "cah"
+
+        if((len(filtres_names)==5) and (all(filtre in filtres_names for filtre in ['price', 'city', 'square', 'land_plot_surface', 'school_exists_nearby']))) :
+            model_folder_path = "model_ML/Combi/Sch/"
+            model_nature = "kmeans"
+
+        if((len(filtres_names)==6) and (all(filtre in filtres_names for filtre in ['price', 'city', 'square', 'land_plot_surface', 'school_exists_nearby', 'medical_service_exists_nearby']))) :
+            model_folder_path = "model_ML/Combi/Sch_Med/"
+            model_nature = "kmeans"
+
+        if((len(filtres_names)==5) and (all(filtre in filtres_names for filtre in ['price', 'city', 'square', 'land_plot_surface', 'medical_service_exists_nearby']))) :
+            model_folder_path = "model_ML/Combi/Med/"
+            model_nature = "kmeans"
+
+
+
+
+        # Prédiction cluster
+        bien_voulu = pd.DataFrame([filtres_vals])
+        poids = pd.DataFrame([poids_filtres]) 
+
+        label_enc_city = joblib.load("model_ML/encoder/label_enc_city.pkl")
+        bien_voulu['city'] = label_enc_city.transform(bien_voulu['city'])
+
+        scaler_path = model_folder_path + "scaler.pkl"
+        scaler = joblib.load(scaler_path)
+        bien_voulu_std = scaler.transform(bien_voulu)
+
+        if(model_nature =="kmeans") : 
+            model_path = model_folder_path + "kmeans_model.pkl"
+            kmeans = joblib.load(model_path)
+            cluster_pred = kmeans.predict(bien_voulu_std)
+
+        if(model_nature =="cah") : 
+            model_path = model_folder_path + "KNClassif_model.pkl"
+            KNClassif = joblib.load(model_path)
+            cluster_pred = KNClassif.predict(bien_voulu_std)
+
+        # Biens proches au bien voulu dans le cluster
+        data_clustered_path = model_folder_path + "data_with_cluster.csv"
+        df = pd.read_csv(data_clustered_path, sep=';')
+        df = df[df['cluster'] == int(cluster_pred[0])]
+        df = df.drop("cluster", axis=1)
         
+        df = pd.DataFrame(scaler.transform(df), columns=df.columns)
+        bien_voulu = pd.DataFrame(scaler.transform(bien_voulu), columns=bien_voulu.columns)
 
+        df['distance'] = np.linalg.norm((df.values - bien_voulu.values) * poids.values, axis=1)
 
-        print("8")
+        df_sorted = df.sort_values('distance')
+        selected_indexes = df_sorted.head(5).index
 
-        json_result = json.dumps(recommandations['list_id'].tolist())
-        print(json_result)
-
-        print("9")
-
-        return json_result
+        return df_filtred.loc[selected_indexes]['list_id'].astype(np.int64).to_json(orient="records")
+    
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
