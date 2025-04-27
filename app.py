@@ -865,6 +865,8 @@ def biens_similaires():
             model_nature = "kmeans"
 
 
+
+
         # Prédiction cluster
         bien_voulu = pd.DataFrame([filtres_vals])
         poids = pd.DataFrame([poids_filtres]) 
@@ -885,7 +887,6 @@ def biens_similaires():
             model_path = model_folder_path + "KNClassif_model.pkl"
             KNClassif = joblib.load(model_path)
             cluster_pred = KNClassif.predict(bien_voulu_std)
-
 
         # Biens proches au bien voulu dans le cluster
         data_clustered_path = model_folder_path + "data_with_cluster.csv"
