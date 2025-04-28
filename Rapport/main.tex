@@ -44,7 +44,7 @@
 \entreprise{Durabil'immo}
 \fonction{Rapport PSID}
 
-\date{mai 2025}
+\date{28 avril 2025}
 
 
 
@@ -90,7 +90,7 @@ Agent immobilier
 	\item Outils de recherche avancée : Propose une recherche par emplacement, prix, type de bien, et d’autres critères pertinents. \\
 \end{enumerate}
 
-\chapter{Analytics}
+\chapter{\textit{Analytics}}
 
 	\section{Objectif}
 
@@ -287,6 +287,7 @@ Agent immobilier
 	\section{Traitement sur le jeu de données}
 
 		\subsection{Extraction d’informations supplémentaires}
+		\label{section:extractionLlm}
 
 		En observant nos données, nous avons remarqué que :
 		\begin{enumerate}
@@ -356,8 +357,7 @@ Agent immobilier
 			\caption{Description des colonnes ajoutées dans le jeu de données : nom, type et description des colonnes}
 		\end{table}
 
-		Pour extraire ces données, la solution a été d'utiliser un LLM, auquel on enverrait la description et qui nous renverrait les informations que nous recherchons. 
-		Nous avons donc écrit un programme Python réalisant cela. Nous avons utilisé la librairie ScrapeGraphAI \cite{scrapegraphai} qui permet de demander une requête, qui concerne une source de données que l'on passe en paramètre, à un LLM. Dans notre cas, la source de données est la description du bien. Dans notre code, nous allons boucler sur tout le fichier CSV et pour chaque annonce : 
+		Pour extraire ces données, la solution a été d'utiliser un LLM, auquel on enverrait la description et qui nous renverrait les informations que nous recherchons. Nous avons donc écrit un programme Python réalisant cela. Nous avons utilisé la librairie ScrapeGraphAI \cite{scrapegraphai} qui permet de demander une requête, qui concerne une source de données que l'on passe en paramètre, à un LLM. Dans notre cas, la source de données est la description du bien. Dans notre code, nous allons boucler sur tout le fichier CSV et pour chaque annonce : 
 		\begin{enumerate}
 			\item Nous récupérons les noms des colonnes ayant des valeurs manquantes
 			\item Nous envoyons le {\it prompt} au LLM. Ce {\it prompt} contient :
@@ -381,7 +381,7 @@ Agent immobilier
 
 		Nous avons également effectué d'autres modifications :
 		\begin{enumerate}
-			\item À la Suite de l'extraction de données via le LLM, certaines données n'étaient pas dans le bon format. Par exemple, pour la colonne land\_plot\_surface, les valeurs attendues doivent être des nombres réels. Cependant, il pouvait arriver que le LLM retourne un nombre réel suivi des caractères "m²". Dans ces cas-là, nous avons simplement retiré les caractères en trop pour conserver seulement le nombre.
+			\item À la suite de l'extraction de données via le LLM, certaines données n'étaient pas dans le bon format. Par exemple, pour la colonne land\_plot\_surface, les valeurs attendues doivent être des nombres réels. Cependant, il pouvait arriver que le LLM retourne un nombre réel suivi des caractères "m²". Dans ces cas-là, nous avons simplement retiré les caractères en trop pour conserver seulement le nombre.
 			\item Une colonne contenant des valeurs booléennes (colonne fai\_included) représentait la valeur "vrai" par le chiffre 1 et la valeur "faux" par le chiffre 2. Pour faciliter l'analyse, nous avons remplacé les valeurs pour les convertir dans un format 1 pour "vrai" et 0 pour "faux". 
 			\item Les annonces de viagers ont été supprimées car elles concernent un autre marché que celui que l'on souhaite analyser. Les conserver fausserait les prix et donc notre analyse.
 			\item Une colonne inutilisée (colonne elevator) a été supprimée.
@@ -698,7 +698,7 @@ Agent immobilier
 			Nous observons donc que :
 			\begin{enumerate}
 				\item Villeneuve-la-Garenne ressort comme la ville la moins chère.
-				\item Levallois-Perret ressort comme la ville la plus chère avec un prix record de 11 009 €/m², mais très peu d’annonces (seulement 3).
+				\item Levallois-Perret ressort comme la ville la plus chère avec un prix record de 11 009 €/m², mais très peu d’annonces (seulement trois).
 			\end{enumerate}
 			On observe un gradient de prix classique : plus on se rapproche de Paris, plus les prix augmentent.
 		\end{enumerate}
@@ -780,33 +780,81 @@ Agent immobilier
 			\label{conseils}
 		\end{figure}	
 
-\chapter{Machine learning}
+\chapter{\textit{Machine learning}}
+	
+Dans le cadre de notre projet de {\it machine learning}, nous avons choisi de poursuivre le développement de l'application {\it web} commencée lors de notre projet de M1. Cette application est destinée aux agents immobiliers. Pour cela, nous avons exploré plusieurs pistes de travail en nous appuyant sur notre jeu de données existant que nous avons présenté dans la partie précédente.
 
-\section{Principe}
+	\section{Exploration des idées}
+	
+	Nous avons d'abord envisagé plusieurs idées basées sur notre jeu de données initial. La première piste consistait à prédire le prix d'un bien immobilier en fonction de ses caractéristiques. Cette approche, basée sur des méthodes de prédiction supervisée, avait pour but d'aider l'agent immobilier dans l'estimation rapide de la valeur des biens. Toutefois, nous avons constaté que notre base de données n'était pas adaptée à cette tâche, car elle ne contenait que des annonces encore disponibles à la vente. L'absence de données sur les biens effectivement vendus introduisait ainsi un biais important, empêchant une validation correcte du modèle. \\
 
-\subsection{Idées}
+	Une seconde piste que nous avons explorée était l’évaluation de la qualité des annonces, en réalisant une classification basée sur le nombre de fois qu'une annonce avait été ajoutée en favoris par des utilisateurs. Cette méthode visait à fournir un indicateur qualitatif aux agents immobiliers pour améliorer leurs annonces. Cependant, après analyse, nous avons jugé cette approche insuffisante : le nombre de favoris ne représente pas directement la qualité d’une annonce et ne fournit pas de pistes précises d'amélioration. De plus, avec les avancées des modèles de langage de grande taille (LLM), il est désormais possible de générer automatiquement des descriptions attractives pour les annonces, ce qui limite encore la pertinence de cette méthode. \\
+	
+	Finalement, nous avons retenu une troisième idée : la recommandation de biens immobiliers à un acheteur potentiel en fonction de critères pondérés qu’il définit lui-même. Cette approche, reposant sur des techniques de clustering non supervisé, nous est apparue plus pertinente à la fois pour la valeur ajoutée qu’elle apporte à l’utilisateur final et pour la faisabilité technique avec notre jeu de données.
 
-prédiction de prix des biens par rapport au caractéristiques des biens => on rejette parce que on a l’impression que notre dataset est pas adapté
-analyser la description de l’annonce pour savoir si la description est bien ou pa
+	\section{Principe retenu}
+	
+	Le projet repose donc sur la recommandation de biens immobiliers en fonction des préférences exprimées par l’acquéreur. L'idée est de minimiser la distance entre les critères pondérés définis par l'utilisateur et les caractéristiques des annonces présentes dans notre base de données.
 
-\subsection{Principe retenu}
+	Cependant, comparer les critères utilisateur avec l’ensemble des 1000 annonces disponibles à chaque requête serait extrêmement coûteux en termes de temps de calcul. Pour optimiser ce processus, nous avons mis en place une approche en deux étapes. Dans un premier temps, nous effectuons un clustering sur les annonces immobilières afin de les regrouper selon leurs similarités. Dans un second temps, à partir des critères fournis par l'utilisateur, nous identifions le cluster le plus proche et nous réalisons une recherche de similarité parmi les annonces de ce cluster. Cela nous permet de classer rapidement les biens les plus pertinents.
 
-idée retenu : recommandation de bien similaire à un bien qu’on donne, en donnant des caractéristiques avec un score d’intérêt  par caractéristiques (dans le front) => pour trouver des biens similaires
-clustering des biens qui se ressemblent par rapport à des variables, leur score d’intérêt 
+	\section{Nettoyage et transformation des données}
+	
+	Les données utilisées pour ce projet proviennent d’un scraping des annonces immobilières publiées sur le site Le Bon Coin, en se concentrant pour l’instant sur le département des Hauts-de-Seine. Pour des informations plus détaillées concernant la collecte de données et le scraping, nous renvoyons à la partie dédiée à l’analyse des données.
 
-\section{Nettoyage des données}
+	Lors du traitement de ces données, nous avons récupéré toutes les caractéristiques explicitement mentionnées dans les critères des annonces. Cependant, certaines informations importantes, telles que la présence de services à proximité du bien ou la taille du sous-sol, étaient uniquement présentes dans les descriptions textuelles.  Afin de ne pas perdre ces données précieuses, nous avons utilisé un modèle de langage (LLM) pour extraire automatiquement les informations pertinentes des descriptions et compléter notre jeu de données.
+ La méthodologie employée est décrite dans la section \ref{section:extractionLlm}.
+	
+	\section{Sélection des modèles de \textit{clustering}}
 
-\section{Transformation des données}
+	Notre projet repose sur un mécanisme d’attribution dynamique des modèles de machine learning, basé sur les variables renseignées par l'utilisateur. Concrètement, un modèle spécifique est sélectionné en fonction des critères sur lesquels l’utilisateur souhaite obtenir des recommandations.
 
-\section{Sélection des modèles}
+		\subsection{Méthode}
+		
+		Pour cela, notre objectif initial était de fournir un filtre dans l’IHM reposant sur l'ensemble des variables sélectionnées lors du prétraitement des données. L’utilisateur aurait ainsi pu sélectionner toutes les variables qu’il souhaitait sans restriction sur l’ensemble des variables de départ. Toutefois, nous avons rapidement constaté que les utilisateurs pouvaient souhaiter ne renseigner qu’une partie de ces variables, ce qui engendrait un très grand nombre de combinaisons possibles. Chaque combinaison nécessitait potentiellement l'entraînement d'un modèle spécifique, rendant le projet difficilement soutenable en termes de complexité et de maintenance. \\
 
-\section{Entraînement}
+	Afin de limiter cette explosion combinatoire, nous avons pris la décision de réduire le nombre de variables utilisées. Cette première réduction a permis de diminuer le nombre de modèles à entraîner, mais sans pour autant améliorer les performances, qui demeuraient globalement insatisfaisantes. \\
 
-\section{Optimisation des hyperparamètres}
+	Pour comprendre cette situation, nous avons mené une analyse approfondie des corrélations entre les variables. Nous avons constaté que l’ajout de certaines variables dégradait la qualité du clustering, au lieu de l'améliorer. \\
 
-\section{ACP, réduction de dimension}
+	Nous avons alors opté pour une démarche itérative : en retirant certaines variables et en en intégrant d'autres, nous avons observé systématiquement l'impact de chaque modification sur les scores de performance. Celles-ci ont été évaluées selon deux indicateurs : le Silhouette Score et le Davies–Bouldin Index. Pour chaque cas, nous avons retenu les algorithmes offrant les meilleures performances. Cette approche nous a permis d’identifier clairement les variables qui contribuaient positivement à la qualité des modèles, ainsi que celles qui, au contraire, la pénalisaient.
+		
+		\subsection{Modèles de \textit{clustering} sélectionnés}
+		
+		À l’issue de ce processus, nous avons retenu uniquement les variables les plus pertinentes. La version finale de notre modèle repose ainsi sur quatre variables obligatoires et trois variables facultatives, assurant un bon compromis entre performance, flexibilité et complexité de mise en œuvre. Afin de couvrir l'ensemble des combinaisons possibles de variables facultatives, nous avons donc déterminé qu'il était nécessaire de construire 15 modèles différents, correspondant aux combinaisons de 1 à 3 variables. En incluant également le modèle de référence, dans lequel aucune variable facultative n'est sélectionnée, nous avons ainsi élaboré un total de 16 modèles. Les scores des modèles sont présentés dans le tableau suivant (Figure \ref{tableauClustering}) :
 
-\section{Validation croisée}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[scale=0.75]{tableau\_clustering.png}
+		\caption{Scores des modèles : Silhouette Score et Davies–Bouldin Index}
+		\label{tableauClustering}
+	\end{figure}	
+	
+	\section{Entraînement des modèles et prédictions}
+	
+	Lorsqu’un utilisateur renseigne ses critères de recherche, ceux-ci sont transformés pour être comparables à un nouveau bien immobilier fictif. L’objectif est alors de prédire dans quel cluster existant ce bien serait le plus susceptible de se trouver. \\
+
+	En fonction des critères fournis par l’utilisateur, le système sélectionne automatiquement le modèle de clustering adapté parmi ceux préalablement construits. Selon les cas, nous utilisons soit l'algorithme K-Means, soit la Classification Ascendante Hiérarchique (CAH) et nous faisons également varier le nombre de clusters K. \\
+
+	L'algorithme K-Means, implémenté dans la bibliothèque Scikit-learn, possède une fonction native de prédiction qui permet d’attribuer facilement un nouveau point à un cluster existant. En revanche, l’approche CAH ne dispose pas d’une fonction de prédiction directe. Pour pallier cette limitation, nous avons mis en œuvre une méthode complémentaire de prédiction/classification (KNclassifier) pour estimer l’appartenance au cluster.
+	
+	\section{\textit{Threats to validity}}
+	
+	Notre approche présente plusieurs limites. \\
+
+	Tout d’abord, les données utilisées proviennent exclusivement d’annonces du site Le Bon Coin pour le département des Hauts-de-Seine, ce qui limite leur représentativité à l’échelle nationale. De plus, seules les annonces actives ont été collectées, introduisant un biais de sélection qui peut affecter la pertinence des modèles. \\
+
+	L’extraction automatique d’informations via un modèle de langage expose également à des risques d’erreurs, notamment lorsque les descriptions textuelles sont ambiguës ou incomplètes. \\
+
+	Concernant les variables, la sélection manuelle, bien que guidée par des scores de clustering, reste subjective et peut avoir écarté certaines variables importantes. Enfin, la réduction du nombre de variables facultatives, nécessaire pour limiter la complexité, restreint la capacité du modèle à capturer toute la diversité des préférences utilisateurs.
+	
+	\section{Pistes d’amélioration et ouverture}
+	
+	En termes d’amélioration, nous envisageons à l'avenir de rendre les modèles de machine learning dynamiques en fonction des pondérations données par l'utilisateur. De plus, l'utilisation d’outils comme FAISS (Facebook AI Similarity Search) ou Annoy (développé par Spotify) pourrait permettre d'optimiser davantage la recherche de similarité, soit sur la totalité des annonces, soit à l’intérieur des clusters. Nous prévoyons de comparer les performances de ces différentes approches.
+	
+	\section{Conclusion}
+	
+	Nous avons ainsi choisi d’approfondir notre travail en développant plusieurs modèles adaptés aux différentes configurations, plutôt que de nous limiter à un modèle unique. Notre démarche visait à construire des modèles à la fois performants, grâce à une évaluation rigoureuse basée sur des indicateurs de qualité, et complémentaires, afin de couvrir un large éventail de besoins utilisateurs. L'objectif final était de proposer une approche réaliste et robuste, fidèle aux contraintes et à la diversité des situations rencontrées en conditions réelles.
 
 \renewcommand{\bibname}{Webographie}
 \addcontentsline{toc}{chapter}{Webographie}
